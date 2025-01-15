@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { db } from './index';
-import { usersTable } from './schema';
+import { usersTable , docsTable, textBlocksTable } from './schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
@@ -17,4 +17,38 @@ async function createUserInDb(email: string, password: string) {
   return newUser;
 }
 
-export { getUserFromDb, createUserInDb };
+async function getDocumentsFromDb(userId: number) {
+  const documents = await db.select().from(docsTable).where(eq(docsTable.userId, userId));
+  return documents;
+}
+
+async function getDocumentFromDb(documentId: number) {
+  const document = await db.select().from(docsTable).where(eq(docsTable.id, documentId));
+  return document[0];
+}
+
+async function createDocumentInDb(userId: number, title: string) {
+  const newDocument = await db.insert(docsTable).values({
+    userId,
+    title,
+  });
+  return newDocument;
+}
+
+async function getTextBlocksFromDb(documentId: number) {
+  const textBlocks = await db.select().from(textBlocksTable).where(eq(textBlocksTable.docId, documentId));
+  return textBlocks;
+}   
+
+async function createTextBlockInDb(documentId: number, text: string) {
+  const newTextBlock = await db.insert(textBlocksTable).values({
+    docId: documentId,
+    text: text,
+    type: 'text',
+    createdAt: sql`CURRENT_TIMESTAMP`,
+    updatedAt: sql`CURRENT_TIMESTAMP`,
+  });
+  return newTextBlock;
+}
+
+export { getUserFromDb, createUserInDb, getDocumentsFromDb, getDocumentFromDb, getTextBlocksFromDb, createDocumentInDb, createTextBlockInDb };

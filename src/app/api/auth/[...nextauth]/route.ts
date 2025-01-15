@@ -2,9 +2,12 @@ import { handlers } from "@/auth";
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from 'next/server';
+import { authOptions } from "@/auth";
 
 // Export the basic auth handlers
 export const { GET, POST } = handlers;
+
+
 
 // Add middleware to check authentication
 export async function middleware(req: NextRequest) {
