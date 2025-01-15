@@ -1,15 +1,17 @@
 "use client";
 
-import { HeaderWrapper } from "@/components/ui/header-wrapper";
 import { Header2 } from "@/components/ui/header";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Dots_v1 } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FileText } from "lucide-react";
-import { Dropdown } from "@/components/ui/dropdown-with-the-same-width-as-trigger";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [docs, setDocs] = useState<Array<{ id: number; title: string }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,9 +67,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header2 />
       <div className="absolute top-16 left-0 right-0">
-        <HeaderWrapper />
       </div>
 
       <div className="flex flex-1">
@@ -76,7 +76,7 @@ export default function DashboardPage() {
           <div className="space-y-4">
             <Button 
               className="w-full"
-              onClick={() => (window.location.href = "/dashboard/new")}
+              onClick={() => (router.push("/dashboard/doc/new"))}
             >
               Create New Doc +
             </Button>
@@ -85,13 +85,13 @@ export default function DashboardPage() {
               <div className="text-sm text-muted-foreground font-medium">Your Documents</div>
               <div className="space-y-1">
                 {docs?.map((doc) => (
-                  <a
+                  <Link 
                     key={doc.id}
-                    href={`/dashboard/${doc.id}`}
+                    href={`/dashboard/doc/${doc.id}`}
                     className="block px-2 py-1 hover:bg-gray-100/50 rounded-md transition-colors"
                   >
                     {doc.title}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </nav>

@@ -12,6 +12,7 @@ import {
 import { Menu, MoveRight, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 function Header1() {
     const navigationItems = [
@@ -177,6 +178,11 @@ function Header2() {
         },
     ];
     const [isOpen, setOpen] = useState(false);
+
+    const handleLogout = async () => {
+        await signOut({ callbackUrl: '/' });
+    };
+
     return (
         <header className="w-full top-0 left-0 bg-grid-slate-100 border-b border-gray-200">
             <div className="container relative mx-auto min-h-20 flex gap-4 flex-row lg:grid lg:grid-cols-3 items-center">
@@ -221,9 +227,9 @@ function Header2() {
                     <p className="font-semibold">Docs++</p>
                 </div>
                 <div className="flex justify-end w-full gap-4">
-                    <Link href="/logout">
-                        <Button>logout</Button>
-                    </Link>
+                    <Button onClick={handleLogout}>
+                        Logout
+                    </Button>
                 </div>
                 <div className="flex w-12 shrink lg:hidden items-end justify-end">
                     <Button variant="ghost" onClick={() => setOpen(!isOpen)}>
