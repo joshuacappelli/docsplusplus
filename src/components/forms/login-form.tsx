@@ -4,21 +4,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         
-        // TODO: Implement login logic here
-        
-        setLoading(false);
+        try {
+            await signIn("credentials", {
+                email,
+                password,
+                callbackUrl: '/dashboard'  // This will redirect to dashboard after successful login
+            });
+        } catch (error) {
+            console.error('Login error:', error);
+            toast.error('Failed to log in. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
-
+    
     return (
         <div className="w-full max-w-md mx-auto space-y-8">
             <div className="space-y-2 text-center">

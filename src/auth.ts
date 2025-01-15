@@ -17,7 +17,7 @@ export const authOptions = {
         try {
           const { email, password } = await signInSchema.parseAsync(credentials);
 
-          // Get user from the database
+          // Get user from the databsase
           const dbUser = await getUserFromDb(email);
 
           if (!dbUser || !bcrypt.compareSync(password, dbUser.password)) {

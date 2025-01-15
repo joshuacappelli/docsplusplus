@@ -47,19 +47,11 @@ function Header1() {
             description: "Managing a small business today is already tough.",
             items: [
                 {
-                    title: "About us",
+                    title: "About me",
                     href: "/about",
                 },
                 {
-                    title: "Fundraising",
-                    href: "/fundraising",
-                },
-                {
-                    title: "Investors",
-                    href: "/investors",
-                },
-                {
-                    title: "Contact us",
+                    title: "Contact me",
                     href: "/contact",
                 },
             ],
@@ -123,9 +115,11 @@ function Header1() {
                 </div>
                 <div className="flex justify-end w-full gap-4">
                     <div className="border-r hidden md:inline"></div>
-                    <Button variant="outline">Sign in</Button>
+                    <Link href="/auth/login">
+                        <Button variant="outline">Sign in</Button>
+                    </Link>
                     <Link href="/auth/signup">
-                        <Button>Get started</Button>
+                        <Button>Get started with</Button>
                     </Link>
                 </div>
                 <div className="flex w-12 shrink lg:hidden items-end justify-end">

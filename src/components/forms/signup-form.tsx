@@ -26,7 +26,7 @@ export function SignupForm() {
 
             if (!response.ok) throw new Error('Signup failed');
             
-            router.push('/auth/login');
+            router.push('/dashboard');
             toast.success('Account created successfully!');
         } catch (error) {
             console.error('Signup error:', error);
@@ -84,7 +84,7 @@ export function SignupForm() {
             <div className="text-center text-sm">
                 <p className="text-muted-foreground">
                     Already have an account?{" "}
-                    <Link href="/login" className="text-primary hover:underline">
+                    <Link href="/auth/login" className="text-primary hover:underline">
                         Sign in
                     </Link>
                 </p>
