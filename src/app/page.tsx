@@ -1,19 +1,22 @@
 "use client";
 
 import { Header1 } from "@/components/ui/header";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-
   const router = useRouter();
-
-  const handleLogin = () => {
-    router.push("/auth/login");
-  };
-
+  
   const handleSignup = () => {
-    router.push("/auth/signup");
+    try {
+      router.push("auth/signup");
+      // For debugging
+      console.log("Navigating to signup...");
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
   };
+
+
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -28,12 +31,15 @@ export default function Home() {
             Let Docs++ handle the heavy lifting while you focus on writing great content.
           </p>
           <div className="flex gap-4 justify-center pt-4">
-            <a
+            {/* Get Started Free Button */}
+            <button
+              onClick={handleSignup}
               className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-primary text-primary-foreground gap-2 hover:bg-primary/90 text-sm sm:text-base h-12 px-8"
-              href="/signup"
             >
-              Get Started Free
-            </a>
+              Get Started
+            </button>
+
+            {/* View Demo Button */}
             <a
               className="rounded-full border border-solid border-input bg-background transition-colors flex items-center justify-center hover:bg-accent hover:text-accent-foreground text-sm sm:text-base h-12 px-8"
               href="/demo"

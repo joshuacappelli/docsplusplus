@@ -124,7 +124,7 @@ function Header1() {
                 <div className="flex justify-end w-full gap-4">
                     <div className="border-r hidden md:inline"></div>
                     <Button variant="outline">Sign in</Button>
-                    <Link href="/signup">
+                    <Link href="/auth/signup">
                         <Button>Get started</Button>
                     </Link>
                 </div>

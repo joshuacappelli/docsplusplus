@@ -4,20 +4,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function SignupForm() {
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         
-        // TODO: Implement signup logic here
-        
-        setLoading(false);
+        try {
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) throw new Error('Signup failed');
+            
+            router.push('/auth/login');
+            toast.success('Account created successfully!');
+        } catch (error) {
+            console.error('Signup error:', error);
+            toast.error('Failed to create account. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -28,19 +44,6 @@ export function SignupForm() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium">
-                        Full Name
-                    </label>
-                    <Input
-                        id="name"
-                        type="text"
-                        placeholder="John Doe"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                </div>
 
                 <div className="space-y-2">
                     <label htmlFor="email" className="text-sm font-medium">
