@@ -4,15 +4,24 @@ import { Dropdown , BlockType} from "@/components/ui/dropdown-with-the-same-widt
 import { useState , useEffect, use } from "react";
 import { blockTypes, headingBlock, textFormatBlock, imageBlock, linkBlock, listBlock, quoteBlock, codeBlock, linebreakBlock , tableBlock } from "../blocks";
 import { useParams, useSearchParams } from 'next/navigation';
-import DragAndDrop from "@/components/ui/dragndrop";
+import DragandDrop from "@/components/ui/dragndrop";
+
+interface TextBlock {
+  id: number;
+  text: string;
+  type: string;
+  docId: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export default function EditDocPage() {
   const searchParams = useSearchParams();
-  console.log(searchParams);
   const docId = searchParams.get('docId');
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
   const [documentName, setDocumentName] = useState<string | null>("Untitled Document");
   const [blockText, setBlockText] = useState<string | null>(null);
+  const [blocks, setBlocks] = useState<TextBlock[]>([]);
   
 
 
@@ -89,7 +98,34 @@ export default function EditDocPage() {
       console.log(result.data);
   }
 
-  
+  const getBlocks = async () => {
+    try {
+        const response = await fetch("/api/dashboard?action=getBlocks&documentId=" + docId, {
+            method: "GET",
+        });
+        const result = await response.json();
+        
+        if (!result.data) {
+            console.error("No data received from API");
+            return [];
+        }
+        
+        return result.data; // Return the data directly, no need for mapping
+    } catch (error) {
+        console.error("Error fetching blocks:", error);
+        return [];
+    }
+  }
+
+  useEffect(() => {
+    async function loadBlocks() {
+        const blocksData = await getBlocks();
+        console.log("Setting blocks:", blocksData); // Better logging
+        setBlocks(blocksData);
+    }
+    loadBlocks();
+  }, [docId]); // Remove the console.log after this useEffect
+
   return (
     <div className="grid grid-cols-12 min-h-screen">
       {/* Sidebar - 20% */}
@@ -144,7 +180,14 @@ export default function EditDocPage() {
           placeholder="Untitled Document"
         />
         {/* Add right section content here */}
-        <DragAndDrop/>
+        {/* <DragAndDrop 
+          textBlocks={blocks || []}
+          onReorder={(newOrder : any) => {
+            console.log(newOrder);
+          }}
+        /> */}
+        <DragandDrop textBlocks={blocks || []} />
+        
       </div>
     </div>
   );
