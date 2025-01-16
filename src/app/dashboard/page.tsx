@@ -15,15 +15,45 @@ export default function DashboardPage() {
   const [docs, setDocs] = useState<Array<{ id: number; title: string }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCreatingDoc, setIsCreatingDoc] = useState(false);
+
+  const handleCreateDoc = async () => {
+    console.log("Creating doc");
+    try {
+      const response = await fetch("/api/dashboard", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "create",
+          title: "Untitled Document",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      setIsCreatingDoc(true);
+      console.log(result.data);
+      console.log(result.data.lastInsertRowid);
+      // Pass the document ID in the URL
+      router.push(`/dashboard/doc/new?docId=${result.data.lastInsertRowid}`);
+    } catch (error) {
+      console.error("Error creating document:", error);
+    }
+  };
 
   useEffect(() => {
     async function fetchDocuments() {
       try {
-        const response = await fetch("/api/dashboard", {
+        const response = await fetch("/api/dashboard?action=getDocuments", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-          },
+          }
         });
   
         if (!response.ok) {
@@ -32,9 +62,8 @@ export default function DashboardPage() {
   
         const result = await response.json();
   
-        // Ensure `data` exists and is an array
         if (result.success && Array.isArray(result.data)) {
-          setDocs(result.data); // Set the `data` array to `docs`
+          setDocs(result.data);
         } else {
           throw new Error("Invalid API response structure");
         }
@@ -76,9 +105,10 @@ export default function DashboardPage() {
           <div className="space-y-4">
             <Button 
               className="w-full"
-              onClick={() => (router.push("/dashboard/doc/new"))}
+              onClick={handleCreateDoc}
+              disabled={isCreatingDoc}
             >
-              Create New Doc +
+              {isCreatingDoc ? "Creating..." : "Create New Doc +"}
             </Button>
 
             <nav className="space-y-2">

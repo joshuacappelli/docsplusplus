@@ -17,6 +17,7 @@ const textFormatBlock: BlockType = {
     id: "text-format",
     title: "Text Format",
     options: [
+        { id: "text", title: "Text", format: "text" },
         { id: "bold", title: "Bold", format: "**text**" },
         { id: "italic", title: "Italic", format: "*text*" },
         { id: "bold-italic", title: "Bold & Italic", format: "***text***" },
