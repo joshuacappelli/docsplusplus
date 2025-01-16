@@ -35,6 +35,11 @@ async function createDocumentInDb(userId: number, title: string) {
   return newDocument;
 }
 
+async function deleteDocumentInDb(documentId: number) {
+  const deletedDocument = await db.delete(docsTable).where(eq(docsTable.id, documentId));
+  return deletedDocument;
+}
+
 async function getTextBlocksFromDb(documentId: number) {
   const textBlocks = await db.select().from(textBlocksTable).where(eq(textBlocksTable.docId, documentId));
   return textBlocks;
@@ -51,4 +56,17 @@ async function createTextBlockInDb(documentId: number, text: string) {
   return newTextBlock;
 }
 
-export { getUserFromDb, createUserInDb, getDocumentsFromDb, getDocumentFromDb, getTextBlocksFromDb, createDocumentInDb, createTextBlockInDb };
+async function updateTextBlockInDb(textBlockId: number, text: string) {
+  const updatedTextBlock = await db.update(textBlocksTable).set({
+    text: text,
+  }).where(eq(textBlocksTable.id, textBlockId));
+  return updatedTextBlock;
+}
+
+async function deleteTextBlockInDb(textBlockId: number) {
+  const deletedTextBlock = await db.delete(textBlocksTable).where(eq(textBlocksTable.id, textBlockId));
+  return deletedTextBlock;
+}
+
+
+export { getUserFromDb, createUserInDb, getDocumentsFromDb, getDocumentFromDb, getTextBlocksFromDb, createDocumentInDb, createTextBlockInDb, updateTextBlockInDb, deleteTextBlockInDb };

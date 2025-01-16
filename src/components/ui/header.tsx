@@ -12,9 +12,11 @@ import {
 import { Menu, MoveRight, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 function Header1() {
+    const router = useRouter();
     const navigationItems = [
         {
             title: "Home",
@@ -69,11 +71,9 @@ function Header1() {
                             {navigationItems.map((item) => (
                                 <NavigationMenuItem key={item.title}>
                                     {item.href ? (
-                                        <>
-                                            <NavigationMenuLink>
-                                                <Button variant="ghost">{item.title}</Button>
-                                            </NavigationMenuLink>
-                                        </>
+                                        <Link href={item.href}>
+                                            <Button variant="ghost">{item.title}</Button>
+                                        </Link>
                                     ) : (
                                         <>
                                             <NavigationMenuTrigger className="font-medium text-sm">
@@ -173,7 +173,7 @@ function Header2() {
     const navigationItems = [
         {
             title: "Home",
-            href: "/",
+            href: "/dashboard",
             description: "",
         },
     ];
@@ -192,11 +192,9 @@ function Header2() {
                             {navigationItems.map((item) => (
                                 <NavigationMenuItem key={item.title}>
                                     {item.href ? (
-                                        <>
-                                            <NavigationMenuLink>
-                                                <Button variant="ghost">{item.title}</Button>
-                                            </NavigationMenuLink>
-                                        </>
+                                        <Link href={item.href}>
+                                            <Button variant="ghost">{item.title}</Button>
+                                        </Link>
                                     ) : (
                                         <>
                                             <NavigationMenuTrigger className="font-medium text-sm">
