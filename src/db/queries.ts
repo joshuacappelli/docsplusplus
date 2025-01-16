@@ -43,7 +43,22 @@ async function updateDocumentinDb(userId: number, documentId: number, title: str
 }   
 
 async function deleteDocumentInDb(userId: number, documentId: number) {
-  const deletedDocument = await db.delete(docsTable).where(and(eq(docsTable.id, documentId), eq(docsTable.userId, userId)));
+  // First delete all associated text blocks
+  await db.delete(textBlocksTable)
+    .where(eq(textBlocksTable.docId, documentId));
+
+  // Then delete the document
+  const deletedDocument = await db.delete(docsTable)
+    .where(
+      and(
+        eq(docsTable.id, documentId),
+        eq(docsTable.userId, userId)
+      )
+    );
+  
+  // Log for debugging
+  console.log('Deleted document result:', deletedDocument);
+  
   return deletedDocument;
 }
 

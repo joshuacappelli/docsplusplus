@@ -75,7 +75,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true });
 
       case 'deleteDocument':
-        await deleteDocumentInDb(documentId, userId);
+        if (!documentId) {
+          return NextResponse.json({ error: "Document ID required" }, { status: 400 });
+        }
+        await deleteDocumentInDb(userId, parseInt(documentId));
         return NextResponse.json({ success: true });
 
       case 'updateDocument':
@@ -97,5 +100,40 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function DELETE(request: NextRequest) {
+  const token = await getToken({
+    req: request,
+    secret: process.env.AUTH_SECRET,
+  });
 
+  if (!token || !token.sub) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const userId = parseInt(token.sub);
+
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get('action');
+  const documentId = searchParams.get('documentId');
+  const textBlockId = searchParams.get('textBlockId');
+
+  switch (action) {
+    case 'deleteDocument':
+      if (!documentId) {
+        return NextResponse.json({ error: "Document ID required" }, { status: 400 });
+      }
+      await deleteDocumentInDb(userId, parseInt(documentId));
+      return NextResponse.json({ success: true });
+
+    case 'deleteBlock':
+      if (!documentId || !textBlockId) {
+        return NextResponse.json({ error: "Document ID and Text Block ID required" }, { status: 400 });
+      }
+      await deleteTextBlockInDb(parseInt(textBlockId), parseInt(documentId), userId);
+      return NextResponse.json({ success: true });
+
+    default:
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  }
+}
 

@@ -10,7 +10,6 @@ export default function DashboardLayout({
       <Header2 />
       {/* Add a subtle grid pattern overlay */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,transparent,black)] pointer-events-none" />
-      <HeaderWrapper />
 
       {children}
     </div>

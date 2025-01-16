@@ -17,6 +17,20 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [isCreatingDoc, setIsCreatingDoc] = useState(false);
 
+  const handleDeleteDoc = async (docId: number) => {
+    try {
+      await fetch(`/api/dashboard?action=deleteDocument&documentId=${docId}`, {
+        method: 'DELETE',
+      });
+      
+      setDocs(docs.filter(doc => doc.id !== docId));
+      // OR if you're using Next.js router:
+      router.refresh();
+    } catch (error) {
+      console.error('Error deleting document:', error);
+    }
+  };
+
   const handleCreateDoc = async () => {
     console.log("Creating doc");
     try {
@@ -115,13 +129,22 @@ export default function DashboardPage() {
               <div className="text-sm text-muted-foreground font-medium">Your Documents</div>
               <div className="space-y-1">
                 {docs?.map((doc) => (
-                  <Link 
-                    key={doc.id}
-                    href={`/dashboard/doc/${doc.id}`}
-                    className="block px-2 py-1 hover:bg-gray-100/50 rounded-md transition-colors"
-                  >
-                    {doc.title}
-                  </Link>
+                  <div key={doc.id} className="flex items-center justify-between">
+                    <Link 
+                      href={`/dashboard/doc/${doc.id}?docId=${doc.id}`}
+                      className="flex-1 px-2 py-1 hover:bg-gray-100/50 rounded-md transition-colors"
+                    >
+                      {doc.title}
+                    </Link>
+                    <Button 
+                      onClick={() => handleDeleteDoc(doc.id)}
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-red-500 hover:text-red-700 hover:bg-red-100/50"
+                    >
+                      ×
+                    </Button>
+                  </div>
                 ))}
               </div>
             </nav>
