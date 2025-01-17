@@ -10,7 +10,7 @@ export const columns = (blocks: TextBlock[]) => {
         {blocks.map((block) => (
           <div
             key={block.id}
-            className="flex items-center text-center justify-center bg-white p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+            className="flex text-center bg-white p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
           >
             <Textblock {...block} />
           </div>

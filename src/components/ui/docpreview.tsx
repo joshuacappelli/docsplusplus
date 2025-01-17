@@ -67,7 +67,7 @@ const testTextBlocks: TextBlock[] = [
 
 
 export default function DocPreview({ blocks = [] }: DocPreviewProps) {
-    const [textblocks, setBlocks] = useState<TextBlock[]>(testTextBlocks);
+    const [textblocks, setBlocks] = useState<TextBlock[]>(blocks);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -97,7 +97,6 @@ export default function DocPreview({ blocks = [] }: DocPreviewProps) {
 
     return (
         <div>
-            <h1>My Tasks</h1>
             <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
                 {columns(textblocks)}
             </DndContext>
