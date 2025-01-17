@@ -97,33 +97,37 @@ async function createTextBlockInDb(documentId: number, userId: number, text: str
 }
 
 async function updateTextBlockInDb(textBlockId: number, documentId: number, userId: number, text: string) {
+  // Error checking for parameters
+  if (!textBlockId || !documentId || !userId) {
+    throw new Error('Invalid parameters: textBlockId, documentId, and userId are required.');
+  }
+  
+  if (typeof text !== 'string' || text.trim() === '') {
+    throw new Error('Invalid text: text must be a non-empty string.');
+  }
+
   const updatedTextBlock = await db
-    .update(textBlocksTable)
-    .set({
-      text: text,
-      updatedAt: sql`CURRENT_TIMESTAMP`,
-    })
-    .where(
-      and(
-        eq(textBlocksTable.id, textBlockId),
-        eq(textBlocksTable.docId, documentId),
-        exists(
-          db
-            .select()
-            .from(docsTable)
-            .where(and(eq(docsTable.id, documentId), eq(docsTable.userId, userId)))
-        )
+  .update(textBlocksTable)
+  .set({
+    text: text, // Update the order value
+  })
+  .where(
+    and(
+      eq(textBlocksTable.id, textBlockId), // Verify textBlockId matches
+      eq(textBlocksTable.docId, documentId), // Verify documentId matches
+      exists(
+        db
+          .select()
+          .from(docsTable) // Check the document exists and belongs to the user
+          .where(and(eq(docsTable.id, documentId), eq(docsTable.userId, userId)))
       )
-    );
+    )
+  ).returning();
+
   return updatedTextBlock;
 }
 
-async function reorderTextBlockInDb(
-  textBlockId: number,
-  documentId: number,
-  userId: number,
-  newOrder: number
-) {
+async function reorderTextBlockInDb(textBlockId: number,documentId: number,userId: number,newOrder: number) {
   // Ensure the text block belongs to the specified document and user
   const reorderedTextBlock = await db
     .update(textBlocksTable)

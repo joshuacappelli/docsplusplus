@@ -5,16 +5,10 @@ import { useState , useEffect, use } from "react";
 import { blockTypes, headingBlock, textFormatBlock, imageBlock, linkBlock, listBlock, quoteBlock, codeBlock, linebreakBlock , tableBlock } from "../blocks";
 import { useParams, useSearchParams } from 'next/navigation';
 import DragandDrop from "@/components/ui/dragndrop";
-
-interface TextBlock {
-  id: number;
-  text: string;
-  type: string;
-  order: number;
-  docId: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Button } from "@/components/ui/button";
+import { TextBlock } from "@/types"; // Import the consolidated type
+import { useRouter } from "next/navigation";
+import DocPreview from "@/components/ui/docpreview";
 
 export default function EditDocPage() {
   const searchParams = useSearchParams();
@@ -23,7 +17,8 @@ export default function EditDocPage() {
   const [documentName, setDocumentName] = useState<string | null>("Untitled Document");
   const [blockText, setBlockText] = useState<string | null>(null);
   const [blocks, setBlocks] = useState<TextBlock[]>([]);
-  
+  const [editBlock, setEditBlock] = useState<TextBlock | null>(null);
+  const router = useRouter();
 
 
   const handleFormatChange = (format: string) => {
@@ -66,6 +61,16 @@ export default function EditDocPage() {
   
 
   const handleAddBlock = async () => {
+      // Check for errors
+      if (!selectedFormat) {
+          console.error("Choose a format");
+          return; // Exit the function if no format is selected
+      }
+      if (!blockText) {
+          console.error("Must type something");
+          return; // Exit the function if the text box is empty
+      }
+
       const response = await fetch("/api/dashboard", {
           method: "POST",
           body: JSON.stringify({ 
@@ -96,6 +101,56 @@ export default function EditDocPage() {
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       setBlockText(event.target.value);
   };
+
+  useEffect(() => {
+    console.log("Edit block has been updated:", editBlock);
+  }, [editBlock]);
+  
+
+  const handleEditBlock = (updatedBlock: TextBlock) => {
+    setEditBlock(updatedBlock); // Directly set the editBlock to the updatedBlock
+    setBlockText(updatedBlock.text);
+    console.log("Updated textBlock:", updatedBlock);
+  };
+
+
+  const handleUpdateBlock = async () => {
+    try {
+      const response = await fetch("/api/dashboard", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "updateBlock",
+          textBlockId: editBlock?.id,
+          documentId: docId,
+          text: blockText,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Block updated:", result);
+  
+        // Update the blocks state
+        setBlocks((prevBlocks: TextBlock[]) =>
+          prevBlocks.map((block: TextBlock) =>
+            block.id === editBlock?.id ? { ...block, text: blockText || '' } : block
+          )
+        );
+  
+        // Reset edit state
+        setEditBlock(null);
+        setBlockText("");
+      } else {
+        console.error("Failed to update block:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating block:", error);
+    }
+  };
+  
 
   useEffect(() => {
       docinfo();
@@ -162,14 +217,14 @@ export default function EditDocPage() {
             placeholder="Markdown text here..."
           />
           <button 
-            className="mt-4 bg-[#7C9A92] text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto"
-            onClick={handleAddBlock}
-            
+            className={`mt-4 ${editBlock ? 'bg-[#6B8A82]' : 'bg-[#7C9A92]'} text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto`}
+            onClick={editBlock ? () => handleUpdateBlock() : handleAddBlock}
+            disabled={!editBlock && !blockText}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
             </svg>
-            Add Block
+            {editBlock ? 'Edit' : 'Add Block'}
           </button>
         </div>
         <button 
@@ -193,14 +248,12 @@ export default function EditDocPage() {
           placeholder="Untitled Document"
         />
         {/* Add right section content here */}
-        {/* <DragAndDrop 
-          textBlocks={blocks || []}
-          onReorder={(newOrder : any) => {
-            console.log(newOrder);
-          }}
-        /> */}
-        <DragandDrop textBlocks={blocks || []} />
         
+        {/* <DragandDrop 
+          textBlocks={blocks || []} 
+          onEdit={handleEditBlock}
+        /> */}
+        <DocPreview blocks={blocks || []} />
       </div>
     </div>
   );
