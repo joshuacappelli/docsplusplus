@@ -24,15 +24,22 @@ export const Textblock: React.FC<TextblockProps> = ({ id, text, type }) => {
       {...listeners}
       style={style}
     >
-      <h3 className='text-lg font-semibold text-gray-800 justify-normal w-full'>{type}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-6 w-6 text-red-500 hover:text-red-700 hover:bg-red-100/50"
-      >
-        x
-      </Button>
-      </h3>
+      <div className='flex justify-between w-full'>
+        <div className='flex-1 flex justify-end'>
+          <h3 className='text-lg font-semibold text-gray-800'>
+            {type}
+          </h3>
+        </div>
+        <div className='flex-1 flex justify-end'>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-red-500 hover:text-red-700 hover:bg-red-100/50"
+          >
+            x
+          </Button>
+        </div>
+      </div>
       <p className='text-gray-700'>{text}</p>
     </div>
   );

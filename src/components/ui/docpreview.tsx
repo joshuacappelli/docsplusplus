@@ -67,7 +67,7 @@ const testTextBlocks: TextBlock[] = [
 
 
 export default function DocPreview({ blocks = [] }: DocPreviewProps) {
-    const [textblocks, setBlocks] = useState<TextBlock[]>(blocks);
+    const [textblocks, setBlocks] = useState<TextBlock[]>(testTextBlocks);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
