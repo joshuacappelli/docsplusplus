@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getTextBlocksFromDb, getDocumentsFromDb, createDocumentInDb, updateTextBlockInDb, deleteTextBlockInDb, deleteDocumentInDb, updateDocumentinDb, createTextBlockInDb } from "@/db/queries";
+import { getTextBlocksFromDb, getDocumentsFromDb, createDocumentInDb, updateTextBlockInDb, deleteTextBlockInDb, deleteDocumentInDb, updateDocumentinDb, createTextBlockInDb, reorderTextBlockInDb } from "@/db/queries";
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { action, documentId, text, title, textBlockId, type } = await request.json();
+    const { action, documentId, text, title, textBlockId, type, newOrder } = await request.json();
     const userId = parseInt(token.sub);
 
     switch (action) {
@@ -70,9 +70,9 @@ export async function POST(request: NextRequest) {
         const updatedBlock = await updateTextBlockInDb(textBlockId, documentId, userId, text);
         return NextResponse.json({ success: true, data: updatedBlock });
 
-      case 'deleteBlock':
-        await deleteTextBlockInDb(textBlockId, documentId, userId);
-        return NextResponse.json({ success: true });
+      case 'reorderBlock':
+        const reorderedBlock = await reorderTextBlockInDb(textBlockId, documentId, userId, newOrder);
+        return NextResponse.json({ success: true, data: reorderedBlock });
 
       case 'deleteDocument':
         if (!documentId) {

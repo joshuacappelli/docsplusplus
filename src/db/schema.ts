@@ -23,6 +23,7 @@ export const textBlocksTable = sqliteTable('text_blocks', {
   id: integer('id').primaryKey(),
   text: text('text').notNull(),
   type: text('type').notNull(),
+  order: integer('order').notNull(),
   docId: integer('doc_id')
     .notNull()
     .references(() => docsTable.id, { onDelete: 'cascade' }),

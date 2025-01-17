@@ -88,9 +88,11 @@ async function createTextBlockInDb(documentId: number, userId: number, text: str
     docId: documentId,
     text: text,
     type: type,
+    order: (await db.select().from(textBlocksTable).where(eq(textBlocksTable.docId, documentId))).length === 0 ? 0 : (await db.select().from(textBlocksTable).where(eq(textBlocksTable.docId, documentId))).length,
     createdAt: sql`CURRENT_TIMESTAMP`,
     updatedAt: sql`CURRENT_TIMESTAMP`,
-  });
+  }).returning();
+
   return newTextBlock;
 }
 
@@ -116,6 +118,34 @@ async function updateTextBlockInDb(textBlockId: number, documentId: number, user
   return updatedTextBlock;
 }
 
+async function reorderTextBlockInDb(
+  textBlockId: number,
+  documentId: number,
+  userId: number,
+  newOrder: number
+) {
+  // Ensure the text block belongs to the specified document and user
+  const reorderedTextBlock = await db
+    .update(textBlocksTable)
+    .set({
+      order: newOrder, // Update the order value
+    })
+    .where(
+      and(
+        eq(textBlocksTable.id, textBlockId), // Verify textBlockId matches
+        eq(textBlocksTable.docId, documentId), // Verify documentId matches
+        exists(
+          db
+            .select()
+            .from(docsTable) // Check the document exists and belongs to the user
+            .where(and(eq(docsTable.id, documentId), eq(docsTable.userId, userId)))
+        )
+      )
+    ).returning();
+
+  return reorderedTextBlock;
+}
+
 async function deleteTextBlockInDb(textBlockId: number, documentId: number, userId: number) {
   const deletedTextBlock = await db
     .delete(textBlocksTable)
@@ -135,4 +165,4 @@ async function deleteTextBlockInDb(textBlockId: number, documentId: number, user
 }
 
 
-export { getUserFromDb, createUserInDb, getDocumentsFromDb, getDocumentFromDb, getTextBlocksFromDb, createDocumentInDb, createTextBlockInDb, updateTextBlockInDb, deleteTextBlockInDb , deleteDocumentInDb, updateDocumentinDb};
+export { getUserFromDb, createUserInDb, getDocumentsFromDb, getDocumentFromDb, getTextBlocksFromDb, createDocumentInDb, createTextBlockInDb, updateTextBlockInDb, deleteTextBlockInDb , deleteDocumentInDb, updateDocumentinDb, reorderTextBlockInDb };

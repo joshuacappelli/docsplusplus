@@ -10,6 +10,7 @@ interface TextBlock {
   id: number;
   text: string;
   type: string;
+  order: number;
   docId: number;
   createdAt: string;
   updatedAt: string;
@@ -74,6 +75,16 @@ export default function EditDocPage() {
               type: selectedFormat
           }),
       });
+
+      if(response.ok){
+        // get the new block
+        const result = await response.json();
+        const newBlock = result.data[0];
+        console.log("result is: ", result);
+        console.log("new block is: ", newBlock);
+        // add it to the blocks array by lifting the state
+        setBlocks(prevBlocks => [...prevBlocks, newBlock]);
+      }
       setBlockText("");
       await docinfo();
   };
@@ -120,11 +131,13 @@ export default function EditDocPage() {
   useEffect(() => {
     async function loadBlocks() {
         const blocksData = await getBlocks();
-        console.log("Setting blocks:", blocksData); // Better logging
-        setBlocks(blocksData);
+
+        const b = blocksData.map((block: any) => (block.text_blocks)).filter((block: any) => block !== undefined);
+        console.log(b);
+        setBlocks(b);
     }
     loadBlocks();
-  }, [docId]); // Remove the console.log after this useEffect
+  }, [docId]); 
 
   return (
     <div className="grid grid-cols-12 min-h-screen">
