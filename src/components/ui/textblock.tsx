@@ -6,9 +6,10 @@ interface TextblockProps {
   id: number;
   text: string;
   type: string;
+  onDelete: (id: number) => void;
 }
 
-export const Textblock: React.FC<TextblockProps> = ({ id, text, type }) => {
+export const Textblock: React.FC<TextblockProps> = ({ id, text, type, onDelete }) => {
   const { attributes, listeners, setNodeRef, transition, transform } = useSortable({ id });
 
   const style = {
@@ -35,6 +36,10 @@ export const Textblock: React.FC<TextblockProps> = ({ id, text, type }) => {
             variant="ghost"
             size="icon"
             className="h-6 w-6 text-red-500 hover:text-red-700 hover:bg-red-100/50"
+            onClick={() => {
+              onDelete(id);
+              console.log("Deleting block with id:", id);
+            }}
           >
             x
           </Button>

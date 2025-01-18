@@ -18,16 +18,52 @@ export default function EditDocPage() {
   const [blockText, setBlockText] = useState<string | null>(null);
   const [blocks, setBlocks] = useState<TextBlock[]>([]);
   const [editBlock, setEditBlock] = useState<TextBlock | null>(null);
-  const router = useRouter();
 
+
+  const handleUpdateBlocks = (updatedBlocks: TextBlock[]) => {
+    console.log("Updated blocks received from DocPreview:", updatedBlocks);
+    setBlocks(updatedBlocks); // Update the parent state
+  };
 
   const handleFormatChange = (format: string) => {
       setSelectedFormat(format);
       console.log(format);
   };
 
+  const handleDoneBlocks = async () => {
+    try {
+      console.log("blocks being sent to the server are: ", blocks);
+      await Promise.all(blocks.map(async (block) => {
+        const response = await fetch("/api/dashboard", {
+          method: "POST",
+          body: JSON.stringify({ 
+              action: "updateDoneBlock", 
+              documentId: docId, 
+              block: block
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          console.error(`Failed to update block ${block.id}:`, response.statusText);
+        }
+        else {
+          console.log("block updated successfully");
+          const result = await response.json();
+          console.log("result is: ", result);
+        }
+      }));
+    } catch (error) {
+      console.error("Error updating all blocks:", error);
+    }
+  }
+
   const handleDone = async () => {
       try {
+          await handleDoneBlocks();
+
           const response = await fetch("/api/dashboard", {
               method: "POST",
               body: JSON.stringify({ 
@@ -58,7 +94,12 @@ export default function EditDocPage() {
           console.error("Error updating document:", error);
       }
   };
-  
+
+  const handleOrderChange = (updatedBlocks: TextBlock[]) => {
+    updatedBlocks.forEach((block) => {
+      block.order = updatedBlocks.indexOf(block);
+    });
+  };
 
   const handleAddBlock = async () => {
       // Check for errors
@@ -91,7 +132,6 @@ export default function EditDocPage() {
         setBlocks(prevBlocks => [...prevBlocks, newBlock]);
       }
       setBlockText("");
-      await docinfo();
   };
 
   const handleDocumentNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,6 +146,11 @@ export default function EditDocPage() {
     console.log("Edit block has been updated:", editBlock);
   }, [editBlock]);
   
+  useEffect(() => {
+    handleOrderChange(blocks);
+    console.log("blocks are: ", blocks);
+
+  }, [blocks]);
 
   const handleEditBlock = (updatedBlock: TextBlock) => {
     setEditBlock(updatedBlock); // Directly set the editBlock to the updatedBlock
@@ -161,38 +206,15 @@ export default function EditDocPage() {
           method: "GET",
       });
       const result = await response.json();
-      console.log(result.data);
+      console.log("from the db: ");
+      const blockdata = result.data.map((block: any) => block.text_blocks);
+      console.log("db is: ", blockdata);
+      const orderedBlocks = blockdata.sort((a : TextBlock, b : TextBlock) => a.order - b.order);
+      console.log("ordered blocks are: ", orderedBlocks);
+      setBlocks(orderedBlocks);
   }
 
-  const getBlocks = async () => {
-    try {
-        const response = await fetch("/api/dashboard?action=getBlocks&documentId=" + docId, {
-            method: "GET",
-        });
-        const result = await response.json();
-        
-        if (!result.data) {
-            console.error("No data received from API");
-            return [];
-        }
-        
-        return result.data; // Return the data directly, no need for mapping
-    } catch (error) {
-        console.error("Error fetching blocks:", error);
-        return [];
-    }
-  }
-
-  useEffect(() => {
-    async function loadBlocks() {
-        const blocksData = await getBlocks();
-
-        const b = blocksData.map((block: any) => (block.text_blocks)).filter((block: any) => block !== undefined);
-        console.log(b);
-        setBlocks(b);
-    }
-    loadBlocks();
-  }, [docId]); 
+  
 
   return (
     <div className="grid grid-cols-12 min-h-screen">
@@ -253,7 +275,7 @@ export default function EditDocPage() {
           textBlocks={blocks || []} 
           onEdit={handleEditBlock}
         /> */}
-        <DocPreview blocks={blocks || []} />
+        <DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} />
       </div>
     </div>
   );

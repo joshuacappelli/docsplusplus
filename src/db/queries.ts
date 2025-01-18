@@ -3,6 +3,7 @@ import { db } from './index';
 import { usersTable , docsTable, textBlocksTable } from './schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
+import { TextBlock } from '@/types';
 
 async function getUserFromDb(email: string) {
   const user = await db.select().from(usersTable).where(eq(usersTable.email, email));
@@ -127,6 +128,37 @@ async function updateTextBlockInDb(textBlockId: number, documentId: number, user
   return updatedTextBlock;
 }
 
+async function updateDoneTextBlockInDb(documentId: number, userId: number, block: TextBlock) {
+  const updatedDoneBlock = await db
+    .update(textBlocksTable)
+    .set({
+      text: block.text,
+      type: block.type,
+      order: block.order,
+      updatedAt: sql`CURRENT_TIMESTAMP`,
+    })
+    .where(
+      and(
+        eq(textBlocksTable.id, block.id),
+        eq(textBlocksTable.docId, documentId),
+        // Ensure the userId matches via the docs table
+        exists(
+          db
+            .select()
+            .from(docsTable)
+            .where(
+              and(
+                eq(docsTable.id, textBlocksTable.docId),
+                eq(docsTable.userId, userId)
+              )
+            )
+        )
+      )
+    ).returning();
+
+  return updatedDoneBlock;
+}
+
 async function reorderTextBlockInDb(textBlockId: number,documentId: number,userId: number,newOrder: number) {
   // Ensure the text block belongs to the specified document and user
   const reorderedTextBlock = await db
@@ -169,4 +201,4 @@ async function deleteTextBlockInDb(textBlockId: number, documentId: number, user
 }
 
 
-export { getUserFromDb, createUserInDb, getDocumentsFromDb, getDocumentFromDb, getTextBlocksFromDb, createDocumentInDb, createTextBlockInDb, updateTextBlockInDb, deleteTextBlockInDb , deleteDocumentInDb, updateDocumentinDb, reorderTextBlockInDb };
+export { getUserFromDb, createUserInDb, getDocumentsFromDb, getDocumentFromDb, getTextBlocksFromDb, createDocumentInDb, createTextBlockInDb, updateTextBlockInDb, deleteTextBlockInDb , deleteDocumentInDb, updateDocumentinDb, reorderTextBlockInDb, updateDoneTextBlockInDb };
