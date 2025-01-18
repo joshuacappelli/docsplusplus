@@ -91,7 +91,7 @@ export default function EditDocPage() {
           return markdownFunctions.lineBreak();
         case 'Table':
           return markdownFunctions.table(block.text);
-        case 'Blockquote':
+        case 'Quote':
           return markdownFunctions.blockquote(block.text);
         default:
           return block.text; // Fallback to plain text

@@ -69,8 +69,38 @@ export function lineBreak(): string {
 }
 
 export function table(text: string): string {
-    return `| ${text.split('|').join('|')} |\n| ${text.split('|').join('|\n|')} |`;
+    const endMarker = "END"; // Define an end marker
+    const trimmedText = text.trim();
+
+    // Automatically add the end marker if it's not present
+    if (!trimmedText.endsWith(endMarker)) {
+        text = `${trimmedText}\n${endMarker}`; // Append the end marker
+    }
+
+    const rows = text.split('\n'); // Split into rows
+    const header = rows[0]
+      .split('|')
+      .map((cell) => cell.trim())
+      .join(' | '); // Format header row
+    const divider = rows[0]
+      .split('|')
+      .map(() => '---')
+      .join(' | '); // Create the divider row
+    const body = rows
+      .slice(1, -1) // Exclude the header row and the end marker
+      .map((row) =>
+        row
+          .split('|')
+          .map((cell) => cell.trim())
+          .join(' | ')
+      )
+      .join('\n'); // Join all body rows with newlines
+  
+    return `| ${header} |\n| ${divider} |\n${body ? `| ${body.replace(/\n/g, ' |\n|')} |` : ''}`;
 }
+  
+  
+  
 
 export function blockquote(text: string): string {
     return `> ${text}`;

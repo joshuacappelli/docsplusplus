@@ -9,6 +9,12 @@ export default {
   ],
   theme: {
   	extend: {
+		scrollbarHide: {
+			'&::-webkit-scrollbar': {
+			  display: 'none',
+			},
+			'scrollbar-width': 'none', /* Firefox */
+		  },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

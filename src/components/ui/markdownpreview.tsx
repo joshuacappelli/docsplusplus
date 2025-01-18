@@ -10,6 +10,12 @@ This is a paragraph.
 - List item 1
 - List item 2
 
+| Month    | Savings |
+| -------- | ------- |
+| January  | $250    |
+| February | $80     |
+| March    | $420    |
+
 \`\`\`javascript
 console.log("Hello, world!");
 \`\`\`
