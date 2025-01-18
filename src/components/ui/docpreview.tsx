@@ -64,10 +64,14 @@ const testTextBlocks: TextBlock[] = [
 interface DocPreviewProps {
     blocks: TextBlock[];
     onUpdate: (updatedBlocks: TextBlock[]) => void; // Callback prop
+    onEdit: (editedBlock: TextBlock) => void;
+    onDelete: (deletedBlock: TextBlock) => void;
   }
   
-  export default function DocPreview({ blocks, onUpdate }: DocPreviewProps) {
+  export default function DocPreview({ blocks, onUpdate, onEdit, onDelete }: DocPreviewProps) {
     const [textblocks, setBlocks] = useState<TextBlock[]>(blocks);
+    const [editedBlock, setEditedBlock] = useState<TextBlock | null>(null);
+    const [deletedBlock, setDeletedBlock] = useState<number | null>(null);
   
     const sensors = useSensors(
       useSensor(PointerSensor, {
@@ -100,6 +104,7 @@ interface DocPreviewProps {
     };
   
     const handleDelete = async (id: number) => {
+        setDeletedBlock(id);
         try {
             const block = textblocks.find(b => b.id === id);
             if (block) {
@@ -109,21 +114,37 @@ interface DocPreviewProps {
             }
     
           setBlocks(blocks.filter(b => b.id !== id));
+          if (block) {
+            onDelete(block);
+          }
         } catch (error) {
           console.error('Error deleting block:', error);
         } finally {
             console.log("Block deleted");
         }
       };
-  
+
+      const handleEdit = (id: number) => {
+        const block = textblocks.find(b => b.id === id);
+        if (block) {
+            setEditedBlock(block);
+            onEdit(block);
+        }
+      };
+
+      useEffect(() => {
+        console.log("edited block is: ", editedBlock);
+      }, [editedBlock]);
+
     useEffect(() => {
       console.log("textblocks state updated:", textblocks);
     }, [textblocks]);
+
   
     return (
       <div>
         <DndContext onDragEnd={handleDragEnd} sensors={sensors} collisionDetection={closestCorners}>
-          {columns(textblocks, handleDelete)}
+          {columns(textblocks, handleDelete, handleEdit)}
         </DndContext>
       </div>
     );

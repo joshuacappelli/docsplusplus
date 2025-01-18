@@ -158,6 +158,23 @@ export default function EditDocPage() {
     console.log("Updated textBlock:", updatedBlock);
   };
 
+  const handleDeleteBlock = (deletedBlock: TextBlock) => {
+    console.log("Deleted block is: ", deletedBlock);
+    if (deletedBlock.id === editBlock?.id) {
+      console.log("Deleted block is the same as the edit block");
+      console.log("Deleted block is: ", deletedBlock);
+      console.log("Edit block is: ", editBlock);
+      setEditBlock(null);
+      setBlockText("");
+    }
+    else {
+      console.log("Deleted block is not the same as the edit block");
+      console.log("Deleted block is: ", deletedBlock);
+      console.log("Edit block is: ", editBlock);
+    }
+  };
+
+
 
   const handleUpdateBlock = async () => {
     try {
@@ -275,7 +292,7 @@ export default function EditDocPage() {
           textBlocks={blocks || []} 
           onEdit={handleEditBlock}
         /> */}
-        <DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} />
+        <DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} onEdit={handleEditBlock} onDelete={handleDeleteBlock} />
       </div>
     </div>
   );
