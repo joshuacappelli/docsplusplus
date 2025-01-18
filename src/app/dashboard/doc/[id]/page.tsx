@@ -8,8 +8,6 @@ import { TextBlock } from "@/types"; // Import the consolidated type
 import DocPreview from "@/components/ui/docpreview";
 import Modal from "@/components/ui/modal";
 import { markdownFunctions } from "@/app/utils/markdown";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 
 export default function EditDocPage() {
@@ -44,9 +42,26 @@ export default function EditDocPage() {
   };
 
   
+  const handleDownload = () => {
+    if (!modalContent) {
+      console.error("No content to download");
+      return;
+    }
 
-  const handleModalTitle = (title: string) => {
-    setModalTitle(title);
+    // Create a Blob from the Markdown content
+    const blob = new Blob([modalContent], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary <a> tag to trigger the download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${documentName || "Untitled_Document"}.md`; // File name
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   useEffect(() => {
@@ -330,6 +345,12 @@ export default function EditDocPage() {
         <button onClick={openModal} className="mt-8 bg-[#7C9A92] text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto">
           Get Preview
         </button>
+        <button
+          onClick={handleDownload}
+          className="mt-8 bg-[#7C9A92] text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto"
+        >
+          Download Markdown
+        </button>
       </div>
 
       <div className="col-span-4 p-4 text-center justify-center items-center">
@@ -375,10 +396,7 @@ export default function EditDocPage() {
         />
         {/* Add right section content here */}
         
-        {/* <DragandDrop 
-          textBlocks={blocks || []} 
-          onEdit={handleEditBlock}
-        /> */}
+        
         <DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} onEdit={handleEditBlock} onDelete={handleDeleteBlock} />
         <Modal isOpen={isModalOpen} onClose={closeModal} title={modalTitle} content={modalContent} />
       </div>
