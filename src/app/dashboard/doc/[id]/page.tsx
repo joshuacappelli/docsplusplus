@@ -4,12 +4,13 @@ import { Dropdown , BlockType} from "@/components/ui/dropdown-with-the-same-widt
 import { useState , useEffect, use } from "react";
 import { blockTypes, headingBlock, textFormatBlock, imageBlock, linkBlock, listBlock, quoteBlock, codeBlock, linebreakBlock , tableBlock } from "../blocks";
 import { useParams, useSearchParams } from 'next/navigation';
-import DragandDrop from "@/components/ui/dragndrop";
-import { Button } from "@/components/ui/button";
 import { TextBlock } from "@/types"; // Import the consolidated type
-import { useRouter } from "next/navigation";
 import DocPreview from "@/components/ui/docpreview";
 import Modal from "@/components/ui/modal";
+import { markdownFunctions } from "@/app/utils/markdown";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 
 export default function EditDocPage() {
   const searchParams = useSearchParams();
@@ -22,7 +23,7 @@ export default function EditDocPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  const [modalContent, setModalContent] = useState<React.ReactNode>(null);
+  const [modalContent, setModalContent] = useState("");
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -42,16 +43,65 @@ export default function EditDocPage() {
       console.log(format);
   };
 
-  useEffect(() => {
-    handleModalContent(<DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} onEdit={handleEditBlock} onDelete={handleDeleteBlock} />);
-  }, [isModalOpen]);
+  
 
   const handleModalTitle = (title: string) => {
     setModalTitle(title);
   };
 
-  const handleModalContent = (content: React.ReactNode) => {
-    setModalContent(content);
+  useEffect(() => {
+    handleModalContent(blocks);
+  }, [blocks]);
+
+  const handleModalContent = (content: TextBlock[]) => {
+    const textblocks = content.map(block => {
+      // Apply the corresponding markdown function based on the block type
+      switch (block.type) {
+        case 'Heading 1':
+          return markdownFunctions.h1(block.text);
+        case 'Heading 2':
+          return markdownFunctions.h2(block.text);
+        case 'Heading 3':
+          return markdownFunctions.h3(block.text);
+        case 'Heading 4':
+          return markdownFunctions.h4(block.text);
+        case 'Heading 5':
+          return markdownFunctions.h5(block.text);
+        case 'Heading 6':
+          return markdownFunctions.h6(block.text);
+        case 'Italic':
+          return markdownFunctions.italic(block.text);
+        case 'Bold Italic':
+          return markdownFunctions.boldItalic(block.text);
+        case 'Strikethrough':
+          return markdownFunctions.strikethrough(block.text);
+        case 'Inline Code':
+          return markdownFunctions.inlineCode(block.text);
+        case 'Code Block':
+          return markdownFunctions.codeBlock(block.text);
+        case 'Link':
+          return markdownFunctions.link(block.text);
+        case 'Image':
+          return markdownFunctions.image(block.text);
+        case 'Bullet List':
+          return markdownFunctions.bulletList(block.text);
+        case 'Numbered List':
+          return markdownFunctions.numberedList(block.text);
+        case 'Line Break':
+          return markdownFunctions.lineBreak();
+        case 'Table':
+          return markdownFunctions.table(block.text);
+        case 'Blockquote':
+          return markdownFunctions.blockquote(block.text);
+        default:
+          return block.text; // Fallback to plain text
+      }
+    }).join('\n');
+
+
+    setModalContent(textblocks);
+    console.log("modal content is: ", textblocks);
+    console.log("modal content is of type: ", typeof textblocks);
   };
 
   const handleDoneBlocks = async () => {

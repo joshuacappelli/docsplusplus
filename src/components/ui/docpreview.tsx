@@ -71,7 +71,6 @@ interface DocPreviewProps {
   export default function DocPreview({ blocks, onUpdate, onEdit, onDelete }: DocPreviewProps) {
     const [textblocks, setBlocks] = useState<TextBlock[]>(blocks);
     const [editedBlock, setEditedBlock] = useState<TextBlock | null>(null);
-    const [deletedBlock, setDeletedBlock] = useState<number | null>(null);
   
     const sensors = useSensors(
       useSensor(PointerSensor, {

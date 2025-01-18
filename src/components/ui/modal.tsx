@@ -1,15 +1,19 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import MarkdownPreview from './markdownpreview';
+import remarkGfm from 'node_modules/remark-gfm/lib';
 
 interface LargeModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  content: React.ReactNode;
+  content: string; // Accept Markdown as a string
 }
 
-const LargeModal: React.FC<LargeModalProps> = ({ isOpen, onClose, title, content }) => {
+const Modal: React.FC<LargeModalProps> = ({ isOpen, onClose, title, content }) => {
   if (!isOpen) return null;
 
+  console.log("modal content in modal is: ", content);
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full h-3/4 overflow-y-auto relative">
@@ -24,10 +28,12 @@ const LargeModal: React.FC<LargeModalProps> = ({ isOpen, onClose, title, content
           </button>
         </div>
         {/* Content */}
-        <div className="p-4">{content}</div>
+        <div className="prose">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+        </div>
       </div>
     </div>
   );
 };
 
-export default LargeModal;
+export default Modal;
