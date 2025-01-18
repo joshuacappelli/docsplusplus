@@ -104,7 +104,6 @@ interface DocPreviewProps {
     };
   
     const handleDelete = async (id: number) => {
-        setDeletedBlock(id);
         try {
             const block = textblocks.find(b => b.id === id);
             if (block) {
@@ -123,6 +122,11 @@ interface DocPreviewProps {
             console.log("Block deleted");
         }
       };
+
+      useEffect(() => {
+        console.log("textblocks are after deletion: ", textblocks);
+      }, [handleDelete]);
+        
 
       const handleEdit = (id: number) => {
         const block = textblocks.find(b => b.id === id);

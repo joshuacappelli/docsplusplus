@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { TextBlock } from "@/types"; // Import the consolidated type
 import { useRouter } from "next/navigation";
 import DocPreview from "@/components/ui/docpreview";
+import Modal from "@/components/ui/modal";
 
 export default function EditDocPage() {
   const searchParams = useSearchParams();
@@ -19,6 +20,17 @@ export default function EditDocPage() {
   const [blocks, setBlocks] = useState<TextBlock[]>([]);
   const [editBlock, setEditBlock] = useState<TextBlock | null>(null);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalContent, setModalContent] = useState<React.ReactNode>(null);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleUpdateBlocks = (updatedBlocks: TextBlock[]) => {
     console.log("Updated blocks received from DocPreview:", updatedBlocks);
@@ -28,6 +40,18 @@ export default function EditDocPage() {
   const handleFormatChange = (format: string) => {
       setSelectedFormat(format);
       console.log(format);
+  };
+
+  useEffect(() => {
+    handleModalContent(<DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} onEdit={handleEditBlock} onDelete={handleDeleteBlock} />);
+  }, [isModalOpen]);
+
+  const handleModalTitle = (title: string) => {
+    setModalTitle(title);
+  };
+
+  const handleModalContent = (content: React.ReactNode) => {
+    setModalContent(content);
   };
 
   const handleDoneBlocks = async () => {
@@ -136,6 +160,10 @@ export default function EditDocPage() {
 
   const handleDocumentNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setDocumentName(event.target.value);
+      setModalTitle(event.target.value);
+
+      console.log("modal title is: ", modalTitle);
+      console.log("document name is: ", documentName);
   };
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -172,6 +200,9 @@ export default function EditDocPage() {
       console.log("Deleted block is: ", deletedBlock);
       console.log("Edit block is: ", editBlock);
     }
+    setBlocks(blocks.filter(block => block.id !== deletedBlock.id));
+    console.log("blocks after deletion are: ", blocks);
+
   };
 
 
@@ -205,6 +236,7 @@ export default function EditDocPage() {
         // Reset edit state
         setEditBlock(null);
         setBlockText("");
+
       } else {
         console.error("Failed to update block:", response.statusText);
       }
@@ -223,6 +255,8 @@ export default function EditDocPage() {
           method: "GET",
       });
       const result = await response.json();
+      setModalTitle(result.data[0].docs.title);
+      setDocumentName(result.data[0].docs.title);
       console.log("from the db: ");
       const blockdata = result.data.map((block: any) => block.text_blocks);
       console.log("db is: ", blockdata);
@@ -243,6 +277,9 @@ export default function EditDocPage() {
             <Dropdown key={block.id} block={block} onSelect={handleFormatChange} />
           ))}
         </div>
+        <button onClick={openModal} className="mt-8 bg-[#7C9A92] text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto">
+          Get Preview
+        </button>
       </div>
 
       <div className="col-span-4 p-4 text-center justify-center items-center">
@@ -293,6 +330,7 @@ export default function EditDocPage() {
           onEdit={handleEditBlock}
         /> */}
         <DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} onEdit={handleEditBlock} onDelete={handleDeleteBlock} />
+        <Modal isOpen={isModalOpen} onClose={closeModal} title={modalTitle} content={modalContent} />
       </div>
     </div>
   );
