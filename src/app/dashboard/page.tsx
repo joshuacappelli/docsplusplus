@@ -1,6 +1,5 @@
 "use client";
 
-import { Header2 } from "@/components/ui/header";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Dots_v1 } from "@/components/ui/spinner";
@@ -126,13 +125,13 @@ export default function DashboardPage() {
             </Button>
 
             <nav className="space-y-2">
-              <div className="text-sm text-muted-foreground font-medium">Your Documents</div>
+              <div className="text-sm text-black font-medium">Your Documents</div>
               <div className="space-y-1">
                 {docs?.map((doc) => (
                   <div key={doc.id} className="flex items-center justify-between">
                     <Link 
                       href={`/dashboard/doc/${doc.id}?docId=${doc.id}`}
-                      className="flex-1 px-2 py-1 hover:bg-gray-100/50 rounded-md transition-colors"
+                      className="flex-1 px-2 py-1 hover:bg-mutedCharcoal/20 rounded-md transition-colors"
                     >
                       {doc.title}
                     </Link>
@@ -152,8 +151,8 @@ export default function DashboardPage() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
-          <h1 className="text-2xl font-semibold text-gray-900">Welcome to Your Dashboard</h1>
+        <main className="flex-1 p-6 text-darkForestGreen">
+          <h1 className="text-2xl font-semibold text-darkForestGreen">Welcome to Your Dashboard</h1>
           {/* Add additional content here */}
           <div className="flex items-center justify-center mt-12">
             {docs && docs.length > 0 ? (
@@ -171,12 +170,12 @@ export default function DashboardPage() {
                 icons={[FileText]}
                 action={{
                   label: "Create New Doc",
-                  onClick: () => (window.location.href = "/dashboard/new"),
+                  onClick: () => handleCreateDoc(),
                 }}
               />
             )}
           </div>
-          <div className="mt-6 p-6 bg-white rounded-lg shadow-sm border">
+          <div className="mt-6 p-6 bg-white rounded-lg shadow-sm border border-darkForestGreen">
     <h2 className="text-xl font-medium text-gray-900 mb-3">Getting Started with Docs++</h2>
     <p className="text-gray-600 mb-4">
       Create beautiful documentation in minutes with our intuitive drag-and-drop interface. 

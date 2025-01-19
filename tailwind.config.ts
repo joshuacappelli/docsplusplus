@@ -16,6 +16,14 @@ export default {
 			'scrollbar-width': 'none', /* Firefox */
 		  },
   		colors: {
+			darkForestGreen: '#1B3A24',
+			forestGreen: '#2C6E49',
+        	sageGreen: '#A9B7A0',
+        	sandBeige: '#E2CFC4',
+        	terracotta: '#D17A22',
+        	earthyBrown: '#60492C',
+        	creamWhite: '#F4F1DE',
+        	mutedCharcoal: '#333333',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

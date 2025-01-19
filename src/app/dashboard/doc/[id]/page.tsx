@@ -270,6 +270,22 @@ export default function EditDocPage() {
 
   };
 
+  const updateDocument = async (docname: string) => {
+    try {
+      const response = await fetch("/api/dashboard", {
+        method: "POST",
+        body: JSON.stringify({ 
+          action: "updateDocument", 
+          documentId: docId, 
+          title: docname 
+        }),
+      });
+    }
+    catch (error) {
+      console.error("Error updating document:", error);
+    }
+  }
+
 
 
   const handleUpdateBlock = async () => {
@@ -316,38 +332,46 @@ export default function EditDocPage() {
   }, []);
 
   const docinfo = async () => {
-      const response = await fetch("/api/dashboard?action=getBlocks&documentId=" + docId, {
-          method: "GET",
-      });
-      const result = await response.json();
+    const response = await fetch("/api/dashboard?action=getBlocks&documentId=" + docId, {
+        method: "GET",
+    });
+    const result = await response.json();
+    console.log("result is: ", result);
+    if (result.data.length === 0) {
+      updateDocument("Untitled Document");
+      setDocumentName("Untitled Document");
+      setModalTitle("Untitled Document");
+    }
+    else {
       setModalTitle(result.data[0].docs.title);
       setDocumentName(result.data[0].docs.title);
-      console.log("from the db: ");
-      const blockdata = result.data.map((block: any) => block.text_blocks);
-      console.log("db is: ", blockdata);
-      const orderedBlocks = blockdata.sort((a : TextBlock, b : TextBlock) => a.order - b.order);
-      console.log("ordered blocks are: ", orderedBlocks);
-      setBlocks(orderedBlocks);
-  }
+    }
+    console.log("from the db: ");
+    const blockdata = result.data.map((block: any) => block.text_blocks);
+    console.log("db is: ", blockdata);
+    const orderedBlocks = blockdata.sort((a : TextBlock, b : TextBlock) => a.order - b.order);
+    console.log("ordered blocks are: ", orderedBlocks);
+    setBlocks(orderedBlocks);
+}
 
   
 
   return (
     <div className="grid grid-cols-12 min-h-screen">
       {/* Sidebar - 20% */}
-      <div className="col-span-3 bg-gray-100 p-4 border-r">
+      <div className="col-span-3 bg-creamWhite/80 p-4 border-r">
         
         <div className="flex flex-col gap-6 pt-6 text-center justify-center items-center">
           {blockTypes.map((block) => (
             <Dropdown key={block.id} block={block} onSelect={handleFormatChange} />
           ))}
         </div>
-        <button onClick={openModal} className="mt-8 bg-[#7C9A92] text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto">
+        <button onClick={openModal} className="mt-8 bg-mutedCharcoal opacity-100 text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto">
           Get Preview
         </button>
         <button
           onClick={handleDownload}
-          className="mt-8 bg-[#7C9A92] text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto"
+          className="mt-8 bg-mutedCharcoal text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto"
         >
           Download Markdown
         </button>
@@ -364,7 +388,7 @@ export default function EditDocPage() {
             placeholder="Markdown text here..."
           />
           <button 
-            className={`mt-4 ${editBlock ? 'bg-[#6B8A82]' : 'bg-[#7C9A92]'} text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto`}
+            className={`mt-4 ${editBlock ? 'bg-mutedCharcoal' : 'bg-mutedCharcoal'} text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto`}
             onClick={editBlock ? () => handleUpdateBlock() : handleAddBlock}
             disabled={!editBlock && !blockText}
           >
@@ -375,7 +399,7 @@ export default function EditDocPage() {
           </button>
         </div>
         <button 
-          className="mt-8 bg-[#7C9A92] text-white px-4 py-2 rounded-md hover:bg-[#6B8A82] transition-colors duration-200 flex items-center gap-2 mx-auto"
+          className="mt-8 bg-mutedCharcoal text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto"
           onClick={handleDone}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -386,7 +410,7 @@ export default function EditDocPage() {
       </div>
 
       {/* Right section - 50% */}
-      <div className="col-span-5 p-4 bg-gray-50">
+      <div className="col-span-5 p-4 bg-creamWhite/20">
         <input
           type="text"
           value={documentName || ''}

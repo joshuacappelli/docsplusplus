@@ -26,8 +26,8 @@ export const Textblock: React.FC<TextblockProps> = ({ id, text, type, onDelete, 
       {...listeners}
       style={style}
     >
-      <div className="flex justify-between items-center w-full" onClick={() => onEdit(id)}>
-        <h3 className="flex-1 text-lg font-semibold text-gray-800 hover:text-blue-500 cursor-pointer break-words">
+      <div className="flex justify-between items-center w-full transition-colors duration-200" onClick={() => onEdit(id)}>
+        <h3 className="flex-1 text-lg font-semibold text-gray-800 hover:text-sageGreen cursor-pointer break-words">
           {type}
         </h3>
         <Button

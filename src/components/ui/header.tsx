@@ -15,240 +15,218 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
-function Header1() {
-    const router = useRouter();
+export default function Header1() {
     const navigationItems = [
-        {
-            title: "Home",
-            href: "/",
-            description: "",
-        },
-        {
-            title: "Information",
-            description: "Here you'll find information about Docs++ and how it works.",
-            items: [
-                {
-                    title: "Docs++",
-                    href: "/docsplusplus",
-                },
-                
-            ],
-        },
-        {
-            title: "Reach me",
-            description: "Here you'll find where to learn more about me and how to contact me.",
-            items: [
-                {
-                    title: "About me",
-                    href: "https://joshuacappelli.com",
-                },
-                {
-                    title: "Contact me",
-                    href: "mailto:joshua@cappelliconnect.com",
-                },
-            ],
-        },
+      {
+        title: "Information",
+        description: "Here you'll find information about Docs++ and how it works.",
+        items: [
+          {
+            title: "Docs++",
+            href: "/docsplusplus",
+          },
+        ],
+      },
+      {
+        title: "Reach me",
+        description: "Here you'll find where to learn more about me and how to contact me.",
+        items: [
+          {
+            title: "About me",
+            href: "https://joshuacappelli.com",
+          },
+          {
+            title: "Contact me",
+            href: "mailto:joshua@cappelliconnect.com",
+          },
+        ],
+      },
     ];
-
-    const [isOpen, setOpen] = useState(false);
-    return (
-        <header className="w-full z-40 fixed top-0 left-0 bg-background">
-            <div className="container relative mx-auto min-h-20 flex gap-4 flex-row lg:grid lg:grid-cols-3 items-center">
-                <div className="justify-start items-center gap-4 lg:flex hidden flex-row">
-                    <NavigationMenu className="flex justify-start items-start">
-                        <NavigationMenuList className="flex justify-start gap-4 flex-row">
-                            {navigationItems.map((item) => (
-                                <NavigationMenuItem key={item.title}>
-                                    {item.href ? (
-                                        <Link href={item.href}>
-                                            <Button variant="ghost">{item.title}</Button>
-                                        </Link>
-                                    ) : (
-                                        <>
-                                            <NavigationMenuTrigger className="font-medium text-sm">
-                                                {item.title}
-                                            </NavigationMenuTrigger>
-                                            <NavigationMenuContent className="!w-[450px] p-4">
-                                                <div className="flex flex-col lg:grid grid-cols-2 gap-4">
-                                                    <div className="flex flex-col h-full justify-between">
-                                                        <div className="flex flex-col">
-                                                            <p className="text-base">{item.title}</p>
-                                                            <p className="text-muted-foreground text-sm">
-                                                                {item.description}
-                                                            </p>
-                                                        </div>
-                                                       
-                                                    </div>
-                                                    <div className="flex flex-col text-sm h-full justify-end">
-                                                        {item.items?.map((subItem) => (
-                                                            <NavigationMenuLink
-                                                                href={subItem.href}
-                                                                key={subItem.title}
-                                                                className="flex flex-row justify-between items-center hover:bg-muted py-2 px-4 rounded"
-                                                            >
-                                                                <span>{subItem.title}</span>
-                                                                <MoveRight className="w-4 h-4 text-muted-foreground" />
-                                                            </NavigationMenuLink>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </NavigationMenuContent>
-                                        </>
-                                    )}
-                                </NavigationMenuItem>
-                            ))}
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                </div>
-                <div className="flex lg:justify-center">
-                    <p className="font-semibold">Docs++</p>
-                </div>
-                <div className="flex justify-end w-full gap-4">
-                    <div className="border-r hidden md:inline"></div>
-                    <Link href="/auth/login">
-                        <Button variant="outline">Sign in</Button>
-                    </Link>
-                    <Link href="/auth/signup">
-                        <Button>Get started with</Button>
-                    </Link>
-                </div>
-                <div className="flex w-12 shrink lg:hidden items-end justify-end">
-                    <Button variant="ghost" onClick={() => setOpen(!isOpen)}>
-                        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                    </Button>
-                    {isOpen && (
-                        <div className="absolute top-20 border-t flex flex-col w-full right-0 bg-background shadow-lg py-4 container gap-8">
-                            {navigationItems.map((item) => (
-                                <div key={item.title}>
-                                    <div className="flex flex-col gap-2">
-                                        {item.href ? (
-                                            <Link
-                                                href={item.href}
-                                                className="flex justify-between items-center"
-                                            >
-                                                <span className="text-lg">{item.title}</span>
-                                                <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
-                                            </Link>
-                                        ) : (
-                                            <p className="text-lg">{item.title}</p>
-                                        )}
-                                        {item.items &&
-                                            item.items.map((subItem) => (
-                                                <Link
-                                                    key={subItem.title}
-                                                    href={subItem.href}
-                                                    className="flex justify-between items-center"
-                                                >
-                                                    <span className="text-muted-foreground">
-                                                        {subItem.title}
-                                                    </span>
-                                                    <MoveRight className="w-4 h-4 stroke-1" />
-                                                </Link>
-                                            ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
-        </header>
-    );
-}
-
-
-
-function Header2() {
-    const navigationItems = [
-        {
-            title: "Home",
-            href: "/dashboard",
-            description: "",
-        },
-    ];
-    const [isOpen, setOpen] = useState(false);
-
-    const handleLogout = async () => {
-        await signOut({ callbackUrl: '/' });
+  
+    // Track the dropdown visibility for each menu item
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  
+    const toggleDropdown = (title: string) => {
+      setOpenDropdown((prev) => (prev === title ? null : title));
     };
-
+  
     return (
-        <header className="w-full top-0 left-0 bg-grid-slate-100 border-b border-gray-200">
-            <div className="container relative mx-auto min-h-20 flex gap-4 flex-row lg:grid lg:grid-cols-3 items-center">
-                <div className="justify-start items-center gap-4 lg:flex hidden flex-row">
-                    <NavigationMenu className="flex justify-start items-start">
-                        <NavigationMenuList className="flex justify-start gap-4 flex-row">
-                            {navigationItems.map((item) => (
-                                <NavigationMenuItem key={item.title}>
-                                    {item.href ? (
-                                        <Link href={item.href}>
-                                            <Button variant="ghost">{item.title}</Button>
-                                        </Link>
-                                    ) : (
-                                        <>
-                                            <NavigationMenuTrigger className="font-medium text-sm">
-                                                {item.title}
-                                            </NavigationMenuTrigger>
-                                            <NavigationMenuContent className="!w-[450px] p-4">
-                                                <div className="flex flex-col lg:grid grid-cols-2 gap-4">
-                                                    <div className="flex flex-col h-full justify-between">
-                                                        <div className="flex flex-col">
-                                                            <p className="text-base">{item.title}</p>
-                                                            <p className="text-muted-foreground text-sm">
-                                                                {item.description}
-                                                            </p>
-                                                        </div>
-                                                       
-                                                    </div>
-                                                    
-                                                </div>
-                                            </NavigationMenuContent>
-                                        </>
-                                    )}
-                                </NavigationMenuItem>
-                            ))}
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                </div>
-                <div className="flex lg:justify-center">
-                    <p className="font-semibold">Docs++</p>
-                </div>
-                <div className="flex justify-end w-full gap-4">
-                    <Button onClick={handleLogout}>
-                        Logout
-                    </Button>
-                </div>
-                <div className="flex w-12 shrink lg:hidden items-end justify-end">
-                    <Button variant="ghost" onClick={() => setOpen(!isOpen)}>
-                        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                    </Button>
-                    {isOpen && (
-                        <div className="absolute top-20 border-t flex flex-col w-full right-0 bg-background shadow-lg py-4 container gap-8">
-                            {navigationItems.map((item) => (
-                                <div key={item.title}>
-                                    <div className="flex flex-col gap-2">
-                                        {item.href ? (
-                                            <Link
-                                                href={item.href}
-                                                className="flex justify-between items-center"
-                                            >
-                                                <span className="text-lg">{item.title}</span>
-                                                <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
-                                            </Link>
-                                        ) : (
-                                            <p className="text-lg">{item.title}</p>
-                                        )}
-                                        
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+      <header className="w-[90%] z-40 fixed top-4 left-1/2 transform -translate-x-1/2 bg-sageGreen bg-opacity-80 rounded-2xl shadow-lg mx-4 p-4">
+        <div className="container relative mx-auto flex gap-4 flex-row lg:grid lg:grid-cols-3 items-center rounded-2xl">
+          {/* Navigation Menu */}
+          <div className="justify-start items-center gap-4 lg:flex hidden flex-row">
+            <nav>
+              <ul className="flex justify-start gap-4">
+                {navigationItems.map((item) => (
+                  <li key={item.title} className="relative group">
+                    {/* Trigger Button */}
+                    <button
+                      onClick={() => toggleDropdown(item.title)}
+                      className="font-medium text-sm px-4 py-2 bg-white rounded-full hover:bg-muted focus:outline-none"
+                    >
+                      {item.title}
+                    </button>
+  
+                    {/* Dropdown Content */}
+                    {openDropdown === item.title && (
+                      <div className="absolute top-full mt-2 bg-white shadow-lg rounded-2xl p-4 w-64">
+                        <p className="text-base font-semibold">{item.title}</p>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                        <ul className="mt-2 space-y-2">
+                          {item.items.map((subItem) => (
+                            <li key={subItem.title}>
+                              <Link
+                                href={subItem.href}
+                                className="block hover:bg-muted py-2 px-4 rounded-lg"
+                              >
+                                {subItem.title}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
-                </div>
-            </div>
-        </header>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+  
+          {/* Centered Title */}
+          <div className="flex lg:justify-center">
+            <p className="font-semibold text-lg">Docs++</p>
+          </div>
+  
+          {/* Right Section */}
+          <div className="flex justify-end w-full gap-4">
+            <Link href="/auth/login">
+              <button className="bg-white border border-gray-300 text-black rounded-full px-6 py-2 hover:bg-gray-100">
+                Sign in
+              </button>
+            </Link>
+            <Link href="/auth/signup">
+              <button className="bg-white text-black rounded-full px-6 py-2 hover:bg-opacity-90">
+                Get started
+              </button>
+            </Link>
+          </div>
+        </div>
+      </header>
     );
-}
+  }
+
+
+  function Header2() {
+    const navigationItems = [
+      {
+        title: "Home",
+        href: "/dashboard",
+        description: "Go to your dashboard",
+      },
+    ];
+  
+    const [isOpen, setOpen] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  
+    const toggleDropdown = (title: string) => {
+      setOpenDropdown((prev) => (prev === title ? null : title));
+    };
+  
+    const handleLogout = async () => {
+      await signOut({ callbackUrl: "/" });
+    };
+  
+    return (
+        <header className="w-[90%] z-40 relative top-4 left-1/2 transform -translate-x-1/2 bg-sageGreen bg-opacity-80 rounded-3xl shadow-lg mx-4 p-4 mb-8">
+        <div className="container relative mx-auto flex gap-4 flex-row lg:grid lg:grid-cols-3 items-center rounded-2xl">
+          {/* Navigation Menu */}
+          <div className="justify-start items-center gap-4 lg:flex hidden flex-row">
+            <nav>
+              <ul className="flex justify-start gap-4">
+                {navigationItems.map((item) => (
+                  <li key={item.title} className="relative group">
+                    {item.href ? (
+                      <Link href={item.href}>
+                        <Button variant="ghost" className="rounded-full">
+                          {item.title}
+                        </Button>
+                      </Link>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => toggleDropdown(item.title)}
+                          className="font-medium text-sm px-4 py-2 bg-white rounded-full hover:bg-muted focus:outline-none"
+                        >
+                          {item.title}
+                        </button>
+                        {openDropdown === item.title && (
+                          <div className="absolute top-full mt-2 bg-white shadow-lg rounded-2xl p-4 w-64">
+                            <p className="text-base font-semibold">{item.title}</p>
+                            <p className="text-sm text-muted-foreground">{item.description}</p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+  
+          {/* Centered Title */}
+          <div className="flex lg:justify-center">
+            <p className="font-semibold text-lg">Docs++</p>
+          </div>
+  
+          {/* Right Section */}
+          <div className="flex justify-end w-full gap-4">
+            <Button onClick={handleLogout} className="rounded-full bg-mutedCharcoal text-white px-6 py-2 hover:bg-mutedCharcoal/90  ">
+              Logout
+            </Button>
+          </div>
+  
+          {/* Mobile Menu */}
+          <div className="flex w-12 shrink lg:hidden items-end justify-end">
+            <Button variant="ghost" onClick={() => setOpen(!isOpen)}>
+              {isOpen ? <span className="w-5 h-5">✕</span> : <span className="w-5 h-5">☰</span>}
+            </Button>
+            {isOpen && (
+              <div className="absolute top-full mt-2 border-t flex flex-col w-full right-0 bg-white shadow-lg py-4 container gap-8 rounded-2xl">
+                {navigationItems.map((item) => (
+                  <div key={item.title}>
+                    <div className="flex flex-col gap-2">
+                      {item.href ? (
+                        <Link
+                          href={item.href}
+                          className="flex justify-between items-center py-2 px-4 hover:bg-gray-100 rounded-lg"
+                        >
+                          <span className="text-lg">{item.title}</span>
+                        </Link>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => toggleDropdown(item.title)}
+                            className="text-lg flex items-center justify-between w-full"
+                          >
+                            {item.title}
+                          </button>
+                          {openDropdown === item.title && (
+                            <div className="mt-2 bg-white rounded-lg shadow-md px-4 py-2">
+                              <p className="text-sm text-muted-foreground">{item.description}</p>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+    );
+  }
 
 
 export { Header1, Header2 };

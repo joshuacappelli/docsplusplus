@@ -32,15 +32,13 @@ export default function Home() {
             Let Docs++ handle the heavy lifting while you focus on writing great content.
           </p>
           <div className="flex gap-4 justify-center pt-4">
-            {/* Get Started Free Button */}
             <button
               onClick={handleSignup}
-              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-primary text-primary-foreground gap-2 hover:bg-primary/90 text-sm sm:text-base h-12 px-8"
+              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-sageGreen gap-2 hover:bg-forestGreen text-sm sm:text-base h-12 px-8"
             >
               Get Started
             </button>
 
-            {/* View Demo Button */}
             <a
               className="rounded-full border border-solid border-input bg-background transition-colors flex items-center justify-center hover:bg-accent hover:text-accent-foreground text-sm sm:text-base h-12 px-8"
               href="/demo"
@@ -51,19 +49,19 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full">
-          <div className="flex flex-col gap-2 p-6 rounded-lg border border-input">
+          <div className="flex flex-col gap-2 p-6 rounded-lg border border-darkForestGreen bg-white">
             <h3 className="text-lg font-semibold">Easy Setup</h3>
             <p className="text-muted-foreground">
               Get your documentation up and running in minutes with our intuitive setup process.
             </p>
           </div>
-          <div className="flex flex-col gap-2 p-6 rounded-lg border border-input">
+          <div className="flex flex-col gap-2 p-6 rounded-lg border border-darkForestGreen bg-white">
             <h3 className="text-lg font-semibold">Smart Summary</h3>
             <p className="text-muted-foreground">
               Powerful summarization functionality helps users make their documentation more concise and readable.
             </p>
           </div>
-          <div className="flex flex-col gap-2 p-6 rounded-lg border border-input">
+          <div className="flex flex-col gap-2 p-6 rounded-lg border border-darkForestGreen bg-white">
             <h3 className="text-lg font-semibold">Simple Design</h3>
             <p className="text-muted-foreground">
               Simple, easy to use interface that allows users to create beautiful markdown documentation in minutes.
