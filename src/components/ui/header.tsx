@@ -24,38 +24,27 @@ function Header1() {
             description: "",
         },
         {
-            title: "Product",
-            description: "Managing a small business today is already tough.",
+            title: "Information",
+            description: "Here you'll find information about Docs++ and how it works.",
             items: [
                 {
-                    title: "Reports",
-                    href: "/reports",
+                    title: "Docs++",
+                    href: "/docsplusplus",
                 },
-                {
-                    title: "Statistics",
-                    href: "/statistics",
-                },
-                {
-                    title: "Dashboards",
-                    href: "/dashboards",
-                },
-                {
-                    title: "Recordings",
-                    href: "/recordings",
-                },
+                
             ],
         },
         {
-            title: "Company",
-            description: "Managing a small business today is already tough.",
+            title: "Reach me",
+            description: "Here you'll find where to learn more about me and how to contact me.",
             items: [
                 {
                     title: "About me",
-                    href: "/about",
+                    href: "https://joshuacappelli.com",
                 },
                 {
                     title: "Contact me",
-                    href: "/contact",
+                    href: "mailto:joshua@cappelliconnect.com",
                 },
             ],
         },

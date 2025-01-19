@@ -45,7 +45,7 @@ export default function Home() {
               className="rounded-full border border-solid border-input bg-background transition-colors flex items-center justify-center hover:bg-accent hover:text-accent-foreground text-sm sm:text-base h-12 px-8"
               href="/demo"
             >
-              View Demo
+              Read the Docs
             </a>
           </div>
         </div>
@@ -54,33 +54,28 @@ export default function Home() {
           <div className="flex flex-col gap-2 p-6 rounded-lg border border-input">
             <h3 className="text-lg font-semibold">Easy Setup</h3>
             <p className="text-muted-foreground">
-              Get your documentation site up and running in minutes with our intuitive setup process.
+              Get your documentation up and running in minutes with our intuitive setup process.
             </p>
           </div>
           <div className="flex flex-col gap-2 p-6 rounded-lg border border-input">
-            <h3 className="text-lg font-semibold">Smart Search</h3>
+            <h3 className="text-lg font-semibold">Smart Summary</h3>
             <p className="text-muted-foreground">
-              Powerful search functionality helps users find exactly what they need, fast.
+              Powerful summarization functionality helps users make their documentation more concise and readable.
             </p>
           </div>
           <div className="flex flex-col gap-2 p-6 rounded-lg border border-input">
-            <h3 className="text-lg font-semibold">Beautiful Design</h3>
+            <h3 className="text-lg font-semibold">Simple Design</h3>
             <p className="text-muted-foreground">
-              Modern, responsive design that looks great on any device or screen size.
+              Simple, easy to use interface that allows users to create beautiful markdown documentation in minutes.
             </p>
           </div>
         </div>
       </main>
 
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center text-sm text-muted-foreground">
-        <a href="/privacy" className="hover:text-foreground">
-          Privacy Policy
-        </a>
-        <a href="/terms" className="hover:text-foreground">
-          Terms of Service
-        </a>
-        <a href="/contact" className="hover:text-foreground">
-          Contact Us
+        
+        <a href="mailto:joshua@cappelliconnect.com" className="hover:text-foreground">
+          Contact Me
         </a>
       </footer>
     </div>
