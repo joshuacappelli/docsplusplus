@@ -249,6 +249,7 @@ export default function NewDocPage() {
   const handleEditBlock = (updatedBlock: TextBlock) => {
     setEditBlock(updatedBlock); // Directly set the editBlock to the updatedBlock
     setBlockText(updatedBlock.text);
+    setSelectedFormat(updatedBlock.type);
     console.log("Updated textBlock:", updatedBlock);
   };
 

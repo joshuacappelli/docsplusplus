@@ -8,6 +8,7 @@ import { TextBlock } from "@/types"; // Import the consolidated type
 import DocPreview from "@/components/ui/docpreview";
 import Modal from "@/components/ui/modal";
 import { markdownFunctions } from "@/app/utils/markdown";
+import  generateText  from "@/app/utils/openai";
 
 
 export default function EditDocPage() {
@@ -249,6 +250,7 @@ export default function EditDocPage() {
   const handleEditBlock = (updatedBlock: TextBlock) => {
     setEditBlock(updatedBlock); // Directly set the editBlock to the updatedBlock
     setBlockText(updatedBlock.text);
+    setSelectedFormat(updatedBlock.type);
     console.log("Updated textBlock:", updatedBlock);
   };
 
@@ -355,6 +357,11 @@ export default function EditDocPage() {
     setBlocks(orderedBlocks);
 }
 
+const handleGenerate = async (action : string) => {
+  const response = await generateText(action, "" + blockText);
+  console.log("response is: ", response);
+}
+
   
 
   return (
@@ -379,7 +386,7 @@ export default function EditDocPage() {
       </div>
 
       <div className="col-span-4 p-4 text-center justify-center items-center">
-        <h2 className="text-lg font-semibold mb-4">{selectedFormat}</h2>
+        <h2 className="text-lg text-black font-semibold mb-4">{selectedFormat}</h2>
         
         <div className="bg-white rounded-lg shadow-md p-4 max-w-md mx-auto">
           <textarea

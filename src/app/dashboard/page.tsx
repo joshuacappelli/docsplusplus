@@ -152,7 +152,7 @@ export default function DashboardPage() {
 
         {/* Main Content */}
         <main className="flex-1 p-6 text-darkForestGreen">
-          <h1 className="text-2xl font-semibold text-darkForestGreen">Welcome to Your Dashboard</h1>
+          <h1 className="text-2xl font-semibold text-black">Welcome to Your Dashboard</h1>
           {/* Add additional content here */}
           <div className="flex items-center justify-center mt-12">
             {docs && docs.length > 0 ? (
