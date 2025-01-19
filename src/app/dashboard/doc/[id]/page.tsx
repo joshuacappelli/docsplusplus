@@ -44,7 +44,6 @@ export default function EditDocPage() {
   
   const handleDownload = () => {
     if (!modalContent) {
-      console.error("No content to download");
       return;
     }
 
@@ -86,7 +85,9 @@ export default function EditDocPage() {
           return markdownFunctions.h6(block.text);
         case 'Italic':
           return markdownFunctions.italic(block.text);
-        case 'Bold Italic':
+        case 'Bold':
+          return markdownFunctions.bold(block.text);
+        case 'Bold & Italic':
           return markdownFunctions.boldItalic(block.text);
         case 'Strikethrough':
           return markdownFunctions.strikethrough(block.text);

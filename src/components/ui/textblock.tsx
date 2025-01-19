@@ -20,14 +20,14 @@ export const Textblock: React.FC<TextblockProps> = ({ id, text, type, onDelete, 
 
   return (
     <div
-      className="flex flex-col bg-slate-400 p-4 m-2 rounded-lg shadow-md w-full transition-colors duration-200 hover:bg-slate-500"
+      className="flex flex-col bg-sageGreen p-4 m-2 rounded-lg shadow-md w-full transition-colors duration-200 hover:bg-sageGreen/90"
       ref={setNodeRef}
       {...attributes}
       {...listeners}
       style={style}
     >
       <div className="flex justify-between items-center w-full transition-colors duration-200" onClick={() => onEdit(id)}>
-        <h3 className="flex-1 text-lg font-semibold text-gray-800 hover:text-sageGreen cursor-pointer break-words">
+        <h3 className="flex-1 text-lg font-semibold text-gray-800 hover:text-white/80 cursor-pointer break-words">
           {type}
         </h3>
         <Button

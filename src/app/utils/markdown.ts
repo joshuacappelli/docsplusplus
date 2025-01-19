@@ -114,6 +114,7 @@ export const markdownFunctions = {
     h5,
     h6,
     italic,
+    bold,
     boldItalic,
     strikethrough,
     inlineCode,

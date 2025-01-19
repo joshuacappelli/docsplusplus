@@ -6,7 +6,7 @@ export default function SignupLayout({
   return (
     <div className="flex py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-creamWhite px-4 shadow sm:rounded-lg sm:px-10">
           {children}
         </div>
       </div>

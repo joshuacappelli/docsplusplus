@@ -31,8 +31,8 @@ const Modal: React.FC<LargeModalProps> = ({ isOpen, onClose, title, content }) =
         </div>
         {/* Content */}
         <div className="prose max-w-none p-4 w-full">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-        </div>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+        </div> 
       </div>
     </div>
   );

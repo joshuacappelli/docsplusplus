@@ -6,7 +6,7 @@ import { Textblock } from './textblock';
 export const columns = (blocks: TextBlock[], handleDelete: (id: number) => void, handleEdit: (id: number) => void) => {
   return (
     <SortableContext items={blocks} strategy={verticalListSortingStrategy}>
-      <div className="flex flex-col gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-md">
+      <div className="flex flex-col mt-4 gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-md">
         {blocks.map((block) => (
           <div
             key={block.order}
