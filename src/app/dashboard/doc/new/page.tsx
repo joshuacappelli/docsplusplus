@@ -224,6 +224,38 @@ export default function NewDocPage() {
       setBlockText("");
   };
 
+  const handleGenerate = async () => {
+    let action = "";
+    if(selectedFormat === "Text" || selectedFormat === "Heading 1" || selectedFormat === "Heading 2" || selectedFormat === "Heading 3" || selectedFormat === "Heading 4" || selectedFormat === "Heading 5" || selectedFormat === "Heading 6" || selectedFormat === "Italic" || selectedFormat === "Bold" || selectedFormat === "Bold & Italic" || selectedFormat === "Strikethrough" || selectedFormat === "Inline Code" || selectedFormat === "Code Block" || selectedFormat === "Quote"){
+      action = "summarize";
+    }
+    else if(selectedFormat === "Table"){
+      action = "tableify";
+    }
+    else{
+      return;
+    }
+    try {
+        const response = await fetch("/api/openai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action, prompt: blockText }),
+        });
+  
+        if (!response.ok) {
+            throw new Error("Failed to generate text");
+        }
+  
+        const data = await response.json();
+        console.log("Generated Text:", data);
+        console.log("data is: ", data.data.content);
+        setBlockText(data.data.content);
+    } catch (error) {
+        console.error("Error:", error);
+    }
+  
+  };
+
   const handleDocumentNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setDocumentName(event.target.value);
       setModalTitle(event.target.value);
@@ -389,17 +421,40 @@ export default function NewDocPage() {
             className="w-full h-96 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C9A92] resize-none"
             placeholder="Markdown text here..."
           />
-          <button 
-            className={`mt-4 ${editBlock ? 'bg-mutedCharcoal' : 'bg-mutedCharcoal'} text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto`}
-            onClick={editBlock ? () => handleUpdateBlock() : handleAddBlock}
-            disabled={!editBlock && !blockText}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            {editBlock ? 'Edit' : 'Add Block'}
-          </button>
-        </div>
+              <div className="flex justify-between items-center mt-4">
+      {/* AI Button */}
+      <button
+    className="bg-gray-300 text-black px-4 py-2 rounded-full hover:bg-gray-400 transition-colors duration-200 flex items-center justify-center gap-2"
+    onClick={() => handleGenerate()}
+  >
+    AI
+  </button>
+
+
+    {/* Add/Edit Block Button */}
+    <button 
+      className={`${
+        editBlock ? 'bg-mutedCharcoal' : 'bg-mutedCharcoal'
+      } text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2`}
+      onClick={editBlock ? () => handleUpdateBlock() : handleAddBlock}
+      disabled={!editBlock && !blockText}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+          clipRule="evenodd"
+        />
+      </svg>
+      {editBlock ? 'Edit' : 'Add Block'}
+    </button>
+  </div>
+</div>
         <button 
           className="mt-8 bg-mutedCharcoal text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto"
           onClick={handleDone}

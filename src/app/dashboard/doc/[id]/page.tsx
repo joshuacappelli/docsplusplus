@@ -8,6 +8,7 @@ import { TextBlock } from "@/types"; // Import the consolidated type
 import DocPreview from "@/components/ui/docpreview";
 import Modal from "@/components/ui/modal";
 import { markdownFunctions } from "@/app/utils/markdown";
+import { Dots_v1 } from "@/components/ui/spinner";
 
 
 export default function EditDocPage() {
@@ -23,7 +24,8 @@ export default function EditDocPage() {
   const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState("");
 
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
 
 
   const openModal = () => {
@@ -230,9 +232,6 @@ export default function EditDocPage() {
   const handleDocumentNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setDocumentName(event.target.value);
       setModalTitle(event.target.value);
-
-      console.log("modal title is: ", modalTitle);
-      console.log("document name is: ", documentName);
   };
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -240,12 +239,10 @@ export default function EditDocPage() {
   };
 
   useEffect(() => {
-    console.log("Edit block has been updated:", editBlock);
   }, [editBlock]);
   
   useEffect(() => {
     handleOrderChange(blocks);
-    console.log("blocks are: ", blocks);
 
   }, [blocks]);
 
@@ -253,25 +250,16 @@ export default function EditDocPage() {
     setEditBlock(updatedBlock); // Directly set the editBlock to the updatedBlock
     setBlockText(updatedBlock.text);
     setSelectedFormat(updatedBlock.type);
-    console.log("Updated textBlock:", updatedBlock);
   };
 
   const handleDeleteBlock = (deletedBlock: TextBlock) => {
-    console.log("Deleted block is: ", deletedBlock);
     if (deletedBlock.id === editBlock?.id) {
-      console.log("Deleted block is the same as the edit block");
-      console.log("Deleted block is: ", deletedBlock);
-      console.log("Edit block is: ", editBlock);
       setEditBlock(null);
       setBlockText("");
     }
     else {
-      console.log("Deleted block is not the same as the edit block");
-      console.log("Deleted block is: ", deletedBlock);
-      console.log("Edit block is: ", editBlock);
     }
     setBlocks(blocks.filter(block => block.id !== deletedBlock.id));
-    console.log("blocks after deletion are: ", blocks);
 
   };
 
@@ -310,7 +298,6 @@ export default function EditDocPage() {
   
       if (response.ok) {
         const result = await response.json();
-        console.log("Block updated:", result);
   
         // Update the blocks state
         setBlocks((prevBlocks: TextBlock[]) =>
@@ -341,7 +328,6 @@ export default function EditDocPage() {
         method: "GET",
     });
     const result = await response.json();
-    console.log("result is: ", result);
     if (result.data.length === 0) {
       updateDocument("Untitled Document");
       setDocumentName("Untitled Document");
@@ -351,17 +337,25 @@ export default function EditDocPage() {
       setModalTitle(result.data[0].docs.title);
       setDocumentName(result.data[0].docs.title);
     }
-    console.log("from the db: ");
     const blockdata = result.data.map((block: any) => block.text_blocks);
-    console.log("db is: ", blockdata);
     const orderedBlocks = blockdata.sort((a : TextBlock, b : TextBlock) => a.order - b.order);
-    console.log("ordered blocks are: ", orderedBlocks);
     setBlocks(orderedBlocks);
+    setIsLoading(false);
 }
 
 
 
-const handleGenerate = async (action: string) => {
+const handleGenerate = async () => {
+  let action = "";
+  if(selectedFormat === "Text" || selectedFormat === "Heading 1" || selectedFormat === "Heading 2" || selectedFormat === "Heading 3" || selectedFormat === "Heading 4" || selectedFormat === "Heading 5" || selectedFormat === "Heading 6" || selectedFormat === "Italic" || selectedFormat === "Bold" || selectedFormat === "Bold & Italic" || selectedFormat === "Strikethrough" || selectedFormat === "Inline Code" || selectedFormat === "Code Block" || selectedFormat === "Quote"){
+    action = "summarize";
+  }
+  else if(selectedFormat === "Table"){
+    action = "tableify";
+  }
+  else{
+    return;
+  }
   try {
       const response = await fetch("/api/openai", {
           method: "POST",
@@ -374,13 +368,23 @@ const handleGenerate = async (action: string) => {
       }
 
       const data = await response.json();
-      console.log("Generated Text:", data);
+      setBlockText(data.data.content);
   } catch (error) {
       console.error("Error:", error);
   }
+
 };
 
-  
+  if (isLoading) {
+    return (
+        <div className="min-h-screen flex justify-center items-center">
+            <div className="flex flex-col justify-center items-center">
+                <Dots_v1 />
+                
+            </div>
+        </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-12 min-h-screen">
@@ -417,23 +421,8 @@ const handleGenerate = async (action: string) => {
       {/* AI Button */}
       <button
     className="bg-gray-300 text-black px-4 py-2 rounded-full hover:bg-gray-400 transition-colors duration-200 flex items-center justify-center gap-2"
-    onClick={() => handleGenerate("summarize")}
+    onClick={() => handleGenerate()}
   >
-    {/* AI SVG Icon */}
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 2a10 10 0 0110 10 10 10 0 11-10-10zm0 5.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm.5 4.75v1.5h1a1 1 0 01.707 1.707l-2 2a1 1 0 01-1.414 0l-2-2A1 1 0 0110 14h1v-1.5h-1a1 1 0 01-.707-1.707l2-2a1 1 0 011.414 0l2 2A1 1 0 0114 11h-1z"
-      />
-    </svg>
     AI
   </button>
 
