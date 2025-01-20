@@ -23,7 +23,7 @@ export default function Header1() {
         items: [
           {
             title: "Docs++",
-            href: "/docsplusplus",
+            href: "/documentation",
           },
         ],
       },
@@ -228,5 +228,70 @@ export default function Header1() {
     );
   }
 
+  function Header3 () {
+    const navigationItems = [
+      { title: "Home", href: "/" },
+      { title: "Headings", href: "#heading" },
+      { title: "Text Format", href: "#text-format" },
+      { title: "Images", href: "#image" },
+      { title: "Quotes", href: "#quote" },
+      { title: "Tables", href: "#table" },
+      { title: "AI", href: "#ai" },
+    ];
+  
+    const [isOpen, setIsOpen] = useState(false);
+  
+    return (
+      <header className="w-[90%] z-40 relative top-4 left-1/2 transform -translate-x-1/2 bg-sageGreen bg-opacity-80 rounded-3xl shadow-lg mx-4 p-4 mb-8">
+        <div className="container mx-auto flex items-center justify-between">
+          {/* Home Button */}
+          <Link href="/" className="text-lg font-semibold text-black hover:underline">
+            Docs++
+          </Link>
+  
+          {/* Navigation Menu */}
+          <nav className="hidden lg:flex gap-6">
+            <ul className="flex items-center gap-6">
+              {navigationItems.map((item) => (
+                <li key={item.title}>
+                  <a
+                    href={item.href}
+                    className="text-black text-sm font-medium px-3 py-2 rounded-full hover:bg-white hover:text-sageGreen transition-colors"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+  
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="lg:hidden text-white text-2xl focus:outline-none"
+          >
+            {isOpen ? "✕" : "☰"}
+          </button>
+        </div>
+  
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className="lg:hidden mt-4 bg-white shadow-md rounded-lg p-4 space-y-4">
+            {navigationItems.map((item) => (
+              <div key={item.title}>
+                <a
+                  href={item.href}
+                  className="block text-sageGreen text-sm font-medium py-2 px-4 rounded hover:bg-gray-100 transition-colors"
+                >
+                  {item.title}
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+      </header>
+    );
+  };
 
-export { Header1, Header2 };
+
+export { Header1, Header2, Header3 };

@@ -41,7 +41,7 @@ export default function Home() {
 
             <a
               className="rounded-full border border-solid border-input bg-background transition-colors flex items-center justify-center hover:bg-accent hover:text-accent-foreground text-sm sm:text-base h-12 px-8"
-              href="/demo"
+              href="/documentation"
             >
               Read the Docs
             </a>
