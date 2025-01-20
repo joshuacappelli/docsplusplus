@@ -8,7 +8,6 @@ import { TextBlock } from "@/types"; // Import the consolidated type
 import DocPreview from "@/components/ui/docpreview";
 import Modal from "@/components/ui/modal";
 import { markdownFunctions } from "@/app/utils/markdown";
-import  generateText  from "@/app/utils/openai";
 
 
 export default function EditDocPage() {
@@ -23,6 +22,9 @@ export default function EditDocPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState("");
+
+  const [isGenerating, setIsGenerating] = useState(false);
+
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -357,10 +359,26 @@ export default function EditDocPage() {
     setBlocks(orderedBlocks);
 }
 
-const handleGenerate = async (action : string) => {
-  const response = await generateText(action, "" + blockText);
-  console.log("response is: ", response);
-}
+
+
+const handleGenerate = async (action: string) => {
+  try {
+      const response = await fetch("/api/openai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action, prompt: blockText }),
+      });
+
+      if (!response.ok) {
+          throw new Error("Failed to generate text");
+      }
+
+      const data = await response.json();
+      console.log("Generated Text:", data);
+  } catch (error) {
+      console.error("Error:", error);
+  }
+};
 
   
 
@@ -389,23 +407,62 @@ const handleGenerate = async (action : string) => {
         <h2 className="text-lg text-black font-semibold mb-4">{selectedFormat}</h2>
         
         <div className="bg-white rounded-lg shadow-md p-4 max-w-md mx-auto">
-          <textarea
-            value={blockText || ''}   
-            onChange={handleTextChange}
-            className="w-full h-96 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C9A92] resize-none"
-            placeholder="Markdown text here..."
-          />
-          <button 
-            className={`mt-4 ${editBlock ? 'bg-mutedCharcoal' : 'bg-mutedCharcoal'} text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto`}
-            onClick={editBlock ? () => handleUpdateBlock() : handleAddBlock}
-            disabled={!editBlock && !blockText}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            {editBlock ? 'Edit' : 'Add Block'}
-          </button>
-        </div>
+  <textarea
+    value={blockText || ''}
+    onChange={handleTextChange}
+    className="w-full h-96 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C9A92] resize-none"
+    placeholder="Markdown text here..."
+  />
+    <div className="flex justify-between items-center mt-4">
+      {/* AI Button */}
+      <button
+    className="bg-gray-300 text-black px-4 py-2 rounded-full hover:bg-gray-400 transition-colors duration-200 flex items-center justify-center gap-2"
+    onClick={() => handleGenerate("summarize")}
+  >
+    {/* AI SVG Icon */}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 2a10 10 0 0110 10 10 10 0 11-10-10zm0 5.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm.5 4.75v1.5h1a1 1 0 01.707 1.707l-2 2a1 1 0 01-1.414 0l-2-2A1 1 0 0110 14h1v-1.5h-1a1 1 0 01-.707-1.707l2-2a1 1 0 011.414 0l2 2A1 1 0 0114 11h-1z"
+      />
+    </svg>
+    AI
+  </button>
+
+
+    {/* Add/Edit Block Button */}
+    <button 
+      className={`${
+        editBlock ? 'bg-mutedCharcoal' : 'bg-mutedCharcoal'
+      } text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2`}
+      onClick={editBlock ? () => handleUpdateBlock() : handleAddBlock}
+      disabled={!editBlock && !blockText}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+          clipRule="evenodd"
+        />
+      </svg>
+      {editBlock ? 'Edit' : 'Add Block'}
+    </button>
+  </div>
+</div>
+
         <button 
           className="mt-8 bg-mutedCharcoal text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto"
           onClick={handleDone}

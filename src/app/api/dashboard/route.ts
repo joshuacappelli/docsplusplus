@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: true, data: blocks });
 
       default:
-        return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+        return NextResponse.json({ error: "Invalid action in routes file" }, { status: 400 });
     }
     
   } catch (error) {
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 
       default:
         return NextResponse.json(
-          { success: false, error: "Invalid action" },
+          { success: false, error: "Invalid action in routes file" },
           { status: 400 }
         );
     }
@@ -137,7 +137,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ success: true });
 
     default:
-      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid action in routes file" }, { status: 400 });
   }
 }
 
