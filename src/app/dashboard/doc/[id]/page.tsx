@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react";
 import { Dropdown } from "@/components/ui/dropdown-with-the-same-width-as-trigger";
 import { useState , useEffect } from "react";
 import { blockTypes } from "../blocks";
@@ -11,7 +12,7 @@ import { markdownFunctions } from "@/app/utils/markdown";
 import { Dots_v1 } from "@/components/ui/spinner";
 
 
-export default function EditDocPage() {
+function EditDoc() {
   const searchParams = useSearchParams();
   const docId = searchParams.get('docId');
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
@@ -273,6 +274,8 @@ export default function EditDocPage() {
           title: docname 
         }),
       });
+
+      console.log(response);
     }
     catch (error) {
       console.error("Error updating document:", error);
@@ -298,6 +301,7 @@ export default function EditDocPage() {
   
       if (response.ok) {
         const result = await response.json();
+        console.log("result is: ", result);
   
         // Update the blocks state
         setBlocks((prevBlocks: TextBlock[]) =>
@@ -337,7 +341,8 @@ export default function EditDocPage() {
       setModalTitle(result.data[0].docs.title);
       setDocumentName(result.data[0].docs.title);
     }
-    const blockdata = result.data.map((block: any) => block.text_blocks);
+    type ApiResponse = typeof result.data;
+    const blockdata = result.data.map((block: ApiResponse) => block.text_blocks);
     const orderedBlocks = blockdata.sort((a : TextBlock, b : TextBlock) => a.order - b.order);
     setBlocks(orderedBlocks);
     setIsLoading(false);
@@ -479,5 +484,14 @@ const handleGenerate = async () => {
         <Modal isOpen={isModalOpen} onClose={closeModal} title={modalTitle} content={modalContent} />
       </div>
     </div>
+  );
+}
+
+export default function EditDocPage() {
+
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-screen"><Dots_v1/></div>}>
+      <EditDoc />
+    </Suspense>
   );
 }

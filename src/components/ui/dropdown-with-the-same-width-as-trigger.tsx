@@ -47,16 +47,4 @@ function Dropdown({ block, onSelect }: DropdownBlocksProps) {
   );
 }
 
-// Example usage:
-const textFormatBlock: BlockType = {
-  id: "text-format",
-  title: "Text Format",
-  options: [
-    { id: "bold", title: "Bold", format: "**text**" },
-    { id: "italic", title: "Italic", format: "*text*" },
-    { id: "bold-italic", title: "Bold & Italic", format: "***text***" },
-    { id: "strikethrough", title: "Strikethrough", format: "~~text~~" },
-  ]
-};
-
 export { Dropdown, type BlockType };

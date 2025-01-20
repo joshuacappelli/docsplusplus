@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react";
 import { Dropdown } from "@/components/ui/dropdown-with-the-same-width-as-trigger";
 import { useState , useEffect } from "react";
 import { blockTypes } from "../blocks";
@@ -8,9 +9,10 @@ import { TextBlock } from "@/types"; // Import the consolidated type
 import DocPreview from "@/components/ui/docpreview";
 import Modal from "@/components/ui/modal";
 import { markdownFunctions } from "@/app/utils/markdown";
+import { Dots_v2 } from "@/components/ui/spinner";
 
 
-export default function NewDocPage() {
+function NewDoc() {
   const searchParams = useSearchParams();
   const docId = searchParams.get('docId');
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
@@ -306,7 +308,7 @@ export default function NewDocPage() {
 
   const updateDocument = async (docname: string) => {
     try {
-      const response = await fetch("/api/dashboard", {
+      await fetch("/api/dashboard", {
         method: "POST",
         body: JSON.stringify({ 
           action: "updateDocument", 
@@ -381,7 +383,8 @@ export default function NewDocPage() {
       setDocumentName(result.data[0].docs.title);
     }
     console.log("from the db: ");
-    const blockdata = result.data.map((block: any) => block.text_blocks);
+    type ApiResponse = typeof result.data;
+    const blockdata = result.data.map((block: ApiResponse) => block.text_blocks);
     console.log("db is: ", blockdata);
     const orderedBlocks = blockdata.sort((a : TextBlock, b : TextBlock) => a.order - b.order);
     console.log("ordered blocks are: ", orderedBlocks);
@@ -391,96 +394,104 @@ export default function NewDocPage() {
   
 
   return (
-    <div className="grid grid-cols-12 min-h-screen">
-      {/* Sidebar - 20% */}
-      <div className="col-span-3 bg-creamWhite/80 p-4 border-r">
-        
-        <div className="flex flex-col gap-6 pt-6 text-center justify-center items-center">
-          {blockTypes.map((block) => (
-            <Dropdown key={block.id} block={block} onSelect={handleFormatChange} />
-          ))}
+      <div className="grid grid-cols-12 min-h-screen">
+        {/* Sidebar - 20% */}
+        <div className="col-span-3 bg-creamWhite/80 p-4 border-r">
+          
+          <div className="flex flex-col gap-6 pt-6 text-center justify-center items-center">
+            {blockTypes.map((block) => (
+              <Dropdown key={block.id} block={block} onSelect={handleFormatChange} />
+            ))}
+          </div>
+          <button onClick={openModal} className="mt-8 bg-mutedCharcoal opacity-100 text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto">
+            Get Preview
+          </button>
+          <button
+            onClick={handleDownload}
+            className="mt-8 bg-mutedCharcoal text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto"
+          >
+            Download Markdown
+          </button>
         </div>
-        <button onClick={openModal} className="mt-8 bg-mutedCharcoal opacity-100 text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto">
-          Get Preview
-        </button>
+
+        <div className="col-span-4 p-4 text-center justify-center items-center">
+          <h2 className="text-lg font-semibold mb-4">{selectedFormat}</h2>
+          
+          <div className="bg-white rounded-lg shadow-md p-4 max-w-md mx-auto">
+            <textarea
+              value={blockText || ''}   
+              onChange={handleTextChange}
+              className="w-full h-96 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C9A92] resize-none"
+              placeholder="Markdown text here..."
+            />
+                <div className="flex justify-between items-center mt-4">
+        {/* AI Button */}
         <button
-          onClick={handleDownload}
-          className="mt-8 bg-mutedCharcoal text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto"
-        >
-          Download Markdown
-        </button>
-      </div>
-
-      <div className="col-span-4 p-4 text-center justify-center items-center">
-        <h2 className="text-lg font-semibold mb-4">{selectedFormat}</h2>
-        
-        <div className="bg-white rounded-lg shadow-md p-4 max-w-md mx-auto">
-          <textarea
-            value={blockText || ''}   
-            onChange={handleTextChange}
-            className="w-full h-96 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C9A92] resize-none"
-            placeholder="Markdown text here..."
-          />
-              <div className="flex justify-between items-center mt-4">
-      {/* AI Button */}
-      <button
-    className="bg-gray-300 text-black px-4 py-2 rounded-full hover:bg-gray-400 transition-colors duration-200 flex items-center justify-center gap-2"
-    onClick={() => handleGenerate()}
-  >
-    AI
-  </button>
-
-
-    {/* Add/Edit Block Button */}
-    <button 
-      className={`${
-        editBlock ? 'bg-mutedCharcoal' : 'bg-mutedCharcoal'
-      } text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2`}
-      onClick={editBlock ? () => handleUpdateBlock() : handleAddBlock}
-      disabled={!editBlock && !blockText}
+      className="bg-gray-300 text-black px-4 py-2 rounded-full hover:bg-gray-400 transition-colors duration-200 flex items-center justify-center gap-2"
+      onClick={() => handleGenerate()}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path
-          fillRule="evenodd"
-          d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-          clipRule="evenodd"
-        />
-      </svg>
-      {editBlock ? 'Edit' : 'Add Block'}
+      AI
     </button>
-  </div>
-</div>
-        <button 
-          className="mt-8 bg-mutedCharcoal text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto"
-          onClick={handleDone}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          Done
-        </button>
-      </div>
 
-      {/* Right section - 50% */}
-      <div className="col-span-5 p-4 bg-creamWhite/20">
-        <input
-          type="text"
-          value={documentName || ''}
-          onChange={handleDocumentNameChange}
-          className="text-lg font-semibold text-center w-full bg-transparent border-b border-transparent hover:border-gray-300 focus:border-[#7C9A92] focus:outline-none px-2 py-1"
-          placeholder="Untitled Document"
-        />
-        {/* Add right section content here */}
-        
-        
-        <DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} onEdit={handleEditBlock} onDelete={handleDeleteBlock} />
-        <Modal isOpen={isModalOpen} onClose={closeModal} title={modalTitle} content={modalContent} />
-      </div>
+
+      {/* Add/Edit Block Button */}
+      <button 
+        className={`${
+          editBlock ? 'bg-mutedCharcoal' : 'bg-mutedCharcoal'
+        } text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2`}
+        onClick={editBlock ? () => handleUpdateBlock() : handleAddBlock}
+        disabled={!editBlock && !blockText}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+        {editBlock ? 'Edit' : 'Add Block'}
+      </button>
     </div>
+  </div>
+          <button 
+            className="mt-8 bg-mutedCharcoal text-white px-4 py-2 rounded-md hover:bg-mutedCharcoal/90 transition-colors duration-200 flex items-center gap-2 mx-auto"
+            onClick={handleDone}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            Done
+          </button>
+        </div>
+
+        {/* Right section - 50% */}
+        <div className="col-span-5 p-4 bg-creamWhite/20">
+          <input
+            type="text"
+            value={documentName || ''}
+            onChange={handleDocumentNameChange}
+            className="text-lg font-semibold text-center w-full bg-transparent border-b border-transparent hover:border-gray-300 focus:border-[#7C9A92] focus:outline-none px-2 py-1"
+            placeholder="Untitled Document"
+          />
+          {/* Add right section content here */}
+          
+          
+          <DocPreview blocks={blocks || []} onUpdate={handleUpdateBlocks} onEdit={handleEditBlock} onDelete={handleDeleteBlock} />
+          <Modal isOpen={isModalOpen} onClose={closeModal} title={modalTitle} content={modalContent} />
+        </div>
+      </div>
+  );
+}
+
+export default function NewDocPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-screen"><Dots_v2/></div>}>
+      <NewDoc />
+    </Suspense>
   );
 }

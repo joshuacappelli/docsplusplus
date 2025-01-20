@@ -1,34 +1,26 @@
-import { Loader } from "lucide-react"
-import { motion } from "framer-motion"
-import { cn } from "@/lib/utils"
+import { Loader } from "lucide-react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface SpinnerProps {
-  size?: string
-  color?: string
+  size?: keyof SizeProps; // Use keyof to ensure type safety
+  color?: keyof StrokeProps; // Ensure color keys match StrokeProps
 }
 
 interface SizeProps {
-  xs: string
-  sm: string
-  md: string
-  lg: string
-  xl: string
-}
-
-interface FillProps {
-  slate: string
-  blue: string
-  red: string
-  green: string
-  white: string
+  xs: string;
+  sm: string;
+  md: string;
+  lg: string;
+  xl: string;
 }
 
 interface StrokeProps {
-  slate: string
-  blue: string
-  red: string
-  green: string
-  white: string
+  slate: string;
+  blue: string;
+  red: string;
+  green: string;
+  white: string;
 }
 
 const sizesClasses: SizeProps = {
@@ -37,23 +29,15 @@ const sizesClasses: SizeProps = {
   md: "w-6 h-6",
   lg: "w-8 h-8",
   xl: "w-10 h-10",
-}
+};
 
-const fillClasses = {
-  slate: "fill-foreground",
-  blue: "fill-blue-500",
-  red: "fill-red-500",
-  green: "fill-emerald-500",
-  white: "fill-background",
-} as FillProps
-
-const strokeClasses = {
+const strokeClasses: StrokeProps = {
   slate: "stroke-foreground",
   blue: "stroke-blue-500",
   red: "stroke-red-500",
   green: "stroke-emerald-500",
   white: "stroke-background",
-} as StrokeProps
+};
 
 export const Spinner = ({ size = "md", color = "slate" }: SpinnerProps) => {
   return (
@@ -61,26 +45,19 @@ export const Spinner = ({ size = "md", color = "slate" }: SpinnerProps) => {
       <Loader
         className={cn(
           "animate-spin",
-          sizesClasses[size as keyof SizeProps],
-          strokeClasses[color as keyof StrokeProps],
+          sizesClasses[size],
+          strokeClasses[color]
         )}
       />
     </div>
-  )
-}
+  );
+};
 
-export const RoundSpinner = ({
-  size = "md",
-  color = "slate",
-}: SpinnerProps) => {
+export const RoundSpinner = ({ size = "md", color = "slate" }: SpinnerProps) => {
   return (
     <div aria-label="Loading..." role="status">
       <svg
-        className={cn(
-          "animate-spin",
-          sizesClasses[size as keyof SizeProps],
-          fillClasses[color as keyof FillProps],
-        )}
+        className={cn("animate-spin", sizesClasses[size], strokeClasses[color])}
         viewBox="3 3 18 18"
       >
         <path
@@ -90,65 +67,55 @@ export const RoundSpinner = ({
         <path d="M16.9497 7.05015C14.2161 4.31648 9.78392 4.31648 7.05025 7.05015C6.65973 7.44067 6.02656 7.44067 5.63604 7.05015C5.24551 6.65962 5.24551 6.02646 5.63604 5.63593C9.15076 2.12121 14.8492 2.12121 18.364 5.63593C18.7545 6.02646 18.7545 6.65962 18.364 7.05015C17.9734 7.44067 17.3403 7.44067 16.9497 7.05015Z"></path>
       </svg>
     </div>
-  )
-}
+  );
+};
 
 interface DotsProps extends SpinnerProps {
-  variant?: "v1" | "v2" | "v3" | "v4" | "v5"
+  variant?: "v1" | "v2" | "v3" | "v4" | "v5";
 }
 
-export const Dots = ({ variant = "v1", ...props }: DotsProps) => {
+export const Dots = ({ variant = "v1"}: DotsProps) => {
   switch (variant) {
     case "v1":
-      return <Dots_v1 {...props} />
+      return <Dots_v1/>;
     case "v2":
-      return <Dots_v2 {...props} />
+      return <Dots_v2/>;
     case "v3":
-      return <Dots_v3 {...props} />
+      return <Dots_v3/>;
     case "v4":
-      return <Dots_v4 {...props} />
+      return <Dots_v4/>;
     case "v5":
-      return <Dots_v5 {...props} />
+      return <Dots_v5/>;
     default:
-      return <Dots_v1 {...props} />
+      return <Dots_v1 />;
   }
-}
+};
 
 export const Dots_v1 = () => (
   <div className="w-fit">
     <div className="relative flex size-full items-center justify-start">
-      <motion.span
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.7, repeat: Infinity }}
-        className="absolute left-2 top-0 size-3.5 rounded-full bg-current"
-      ></motion.span>
-      <motion.span
-        initial={{ x: 0 }}
-        animate={{ x: 24 }}
-        transition={{ duration: 0.7, repeat: Infinity }}
-        className="absolute left-2 top-0 size-3.5 rounded-full bg-current"
-      ></motion.span>
-      <motion.span
-        initial={{ x: 0 }}
-        animate={{ x: 24 }}
-        transition={{ duration: 0.7, repeat: Infinity }}
-        className="absolute left-8 top-0 size-3.5 rounded-full bg-current"
-      ></motion.span>
-      <motion.span
-        initial={{ scale: 1 }}
-        animate={{ scale: 0 }}
-        transition={{ duration: 0.7, repeat: Infinity }}
-        className="absolute left-14 top-0 size-3.5 rounded-full bg-current"
-      ></motion.span>
+      {[0, 1, 2, 3].map((i) => (
+        <motion.span
+          key={i}
+          className="absolute size-3.5 rounded-full bg-current"
+          initial={{ scale: i === 0 ? 0 : 1 }}
+          animate={{ scale: i === 0 ? 1 : 0 }}
+          transition={{
+            duration: 0.7,
+            repeat: Infinity,
+          }}
+          style={{ left: `${i * 6}rem` }}
+        />
+      ))}
     </div>
   </div>
-)
+);
 
 export const Dots_v2 = () => (
-  <div className="flex items-center justify-center ">
-    <div className="flex space-x-2">
+  <div className="flex items-center justify-center space-x-2">
+    {[0, 0.3, 0.6].map((delay, index) => (
       <motion.div
+        key={index}
         className="size-3.5 rounded-full bg-current"
         animate={{
           scale: [1, 1.3, 1],
@@ -158,47 +125,24 @@ export const Dots_v2 = () => (
           duration: 1.1,
           ease: "easeInOut",
           repeat: Infinity,
+          delay,
         }}
       />
-      <motion.div
-        className="size-3.5 rounded-full bg-current"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.6, 1, 0.6],
-        }}
-        transition={{
-          duration: 1.1,
-          ease: "easeInOut",
-          repeat: Infinity,
-          delay: 0.3,
-        }}
-      />
-      <motion.div
-        className="size-3.5 rounded-full bg-current"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.6, 1, 0.6],
-        }}
-        transition={{
-          duration: 1.1,
-          ease: "easeInOut",
-          repeat: Infinity,
-          delay: 0.6,
-        }}
-      />
-    </div>
+    ))}
   </div>
-)
+);
 
-export const Dots_v3 = () => {
-  return (
-    <div className="flex items-center justify-center space-x-2">
-      <div className="size-3.5 animate-bounce rounded-full bg-current [animation-delay:-0.3s]"></div>
-      <div className="size-3.5 animate-bounce rounded-full bg-current [animation-delay:-0.13s]"></div>
-      <div className="size-3.5 animate-bounce rounded-full bg-current"></div>
-    </div>
-  )
-}
+export const Dots_v3 = () => (
+  <div className="flex items-center justify-center space-x-2">
+    {[0.3, 0.13, 0].map((delay, index) => (
+      <div
+        key={index}
+        className={`size-3.5 animate-bounce rounded-full bg-current`}
+        style={{ animationDelay: `${delay}s` }}
+      ></div>
+    ))}
+  </div>
+);
 
 export const Dots_v4 = () => (
   <div className="flex items-center justify-center space-x-2">
@@ -216,18 +160,18 @@ export const Dots_v4 = () => (
       ></motion.span>
     ))}
   </div>
-)
+);
 
 export const Dots_v5 = () => {
-  const dots = 8
-  const radius = 24
+  const dots = 8;
+  const radius = 24;
 
   return (
     <div className="relative size-20 border">
       {[...Array(dots)].map((_, i) => {
-        const angle = (i / dots) * (2 * Math.PI)
-        const x = radius * Math.cos(angle)
-        const y = radius * Math.sin(angle)
+        const angle = (i / dots) * (2 * Math.PI);
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
 
         return (
           <motion.div
@@ -248,8 +192,8 @@ export const Dots_v5 = () => {
               ease: "easeInOut",
             }}
           />
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};

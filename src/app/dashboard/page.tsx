@@ -8,6 +8,11 @@ import { FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+interface doctype {
+  id: number;
+  title: string;
+}
+
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -127,7 +132,7 @@ export default function DashboardPage() {
             <nav className="space-y-2">
               <div className="text-sm text-black font-medium">Your Documents</div>
               <div className="space-y-1">
-                {docs?.map((doc : any) => (
+                {docs?.map((doc : doctype) => (
                   <div key={doc.id} className="flex items-center justify-between">
                     <Link 
                       href={`/dashboard/doc/${doc.id}?docId=${doc.id}`}
@@ -176,19 +181,20 @@ export default function DashboardPage() {
             )}
           </div>
           <div className="mt-6 p-6 bg-white rounded-lg shadow-sm border border-darkForestGreen">
-    <h2 className="text-xl font-medium text-gray-900 mb-3">Getting Started with Docs++</h2>
-    <p className="text-gray-600 mb-4">
-      Create beautiful documentation in minutes with our intuitive drag-and-drop interface. 
-      Docs++ lets you:
-    </p>
-    <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-      <li>Build custom markdown documentation with ease</li>
-      <li>Drag and drop pre-built text blocks for quick composition</li>
-      <li>Customize your documentation layout and styling</li>
-    </ul>
-    <p className="text-gray-600">
-      Get started by creating your first document using the "Create New Doc +" button in the sidebar.
-    </p>
+          <h2 className="text-xl font-medium text-gray-900 mb-3">Getting Started with Docs++</h2>
+          <p className="text-gray-600 mb-4">
+            Create beautiful documentation in minutes with our intuitive drag-and-drop interface. 
+            Docs++ lets you:
+          </p>
+          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+            <li>Build custom markdown documentation with ease</li>
+            <li>Drag and drop pre-built text blocks for quick composition</li>
+            <li>Customize your documentation layout and styling</li>
+          </ul>
+          <p className="text-gray-600">
+            Get started by creating your first document using the &quot;Create New Doc +&quot; button in the sidebar.
+          </p>
+
   </div>
         </main>
       </div>
