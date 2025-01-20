@@ -1,4 +1,4 @@
-import { Dropdown , BlockType} from "@/components/ui/dropdown-with-the-same-width-as-trigger";
+import { BlockType} from "@/components/ui/dropdown-with-the-same-width-as-trigger";
 
 const headingBlock: BlockType = {
     id: "heading",

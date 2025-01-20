@@ -127,7 +127,7 @@ export default function DashboardPage() {
             <nav className="space-y-2">
               <div className="text-sm text-black font-medium">Your Documents</div>
               <div className="space-y-1">
-                {docs?.map((doc) => (
+                {docs?.map((doc : any) => (
                   <div key={doc.id} className="flex items-center justify-between">
                     <Link 
                       href={`/dashboard/doc/${doc.id}?docId=${doc.id}`}

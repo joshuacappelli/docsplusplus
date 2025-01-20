@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import MarkdownPreview from './markdownpreview';
 import remarkGfm from 'node_modules/remark-gfm/lib';
 
 interface LargeModalProps {

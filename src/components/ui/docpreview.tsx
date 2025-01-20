@@ -2,14 +2,13 @@
 import { useEffect, useState } from "react";
 import {
   DndContext,
-  KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   closestCorners,
   DragEndEvent,
 } from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { TextBlock } from "@/types";
 import { columns } from "./columns";
 

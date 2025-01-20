@@ -1,9 +1,9 @@
 "use client"
 
-import { Dropdown , BlockType} from "@/components/ui/dropdown-with-the-same-width-as-trigger";
-import { useState , useEffect, use } from "react";
-import { blockTypes, headingBlock, textFormatBlock, imageBlock, linkBlock, listBlock, quoteBlock, codeBlock, linebreakBlock , tableBlock } from "../blocks";
-import { useParams, useSearchParams } from 'next/navigation';
+import { Dropdown } from "@/components/ui/dropdown-with-the-same-width-as-trigger";
+import { useState , useEffect } from "react";
+import { blockTypes } from "../blocks";
+import { useSearchParams } from 'next/navigation';
 import { TextBlock } from "@/types"; // Import the consolidated type
 import DocPreview from "@/components/ui/docpreview";
 import Modal from "@/components/ui/modal";
