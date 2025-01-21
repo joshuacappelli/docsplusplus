@@ -38,7 +38,6 @@ export const authOptions = {
       },
     }),
   ],
-  secret: process.env.AUTH_SECRET,
   trustHost: true,
 };
 
