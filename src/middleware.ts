@@ -8,6 +8,7 @@ export async function middleware(req: NextRequest) {
 
   const secret = process.env.AUTH_SECRET;
   console.log("AUTH_SECRET:", secret ? "Set" : "Not set");
+  console.log("AUTH_SECRET:", process.env.AUTH_SECRET);
 
   console.log("nextauth url", process.env.NEXTAUTH_URL);
 
