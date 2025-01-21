@@ -18,11 +18,12 @@ export async function middleware(request: NextRequest) {
 
   try {
     // Debug: Inspect cookies
+    console.log("Request:", request);
     console.log("Cookies available:", request.cookies.getAll());
 
     // Attempt to retrieve the *JWT* token (session.strategy = 'jwt' from NextAuth)
     console.log("Attempting to retrieve the token...");
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const token = await getToken({ req: request });
 
     if (token) {
       console.log("Token retrieved successfully:", token);
@@ -31,7 +32,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const url = request.nextUrl;
-
+    console.log("URL:", url);
     // If user is already logged in (has a token) and tries to visit /auth/login
     // then redirect them to /dashboard
     if (token && url.pathname === "/auth/login") {
