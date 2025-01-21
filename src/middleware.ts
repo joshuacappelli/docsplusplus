@@ -2,27 +2,27 @@ import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 
-export async function middleware(req: NextRequest) {
+export async function middleware(request: NextRequest) {
   console.log("Middleware invoked");
   console.log(
-    "AUTH_SECRET (length):",
-    process.env.AUTH_SECRET ? process.env.AUTH_SECRET.length : "Not set"
+    "NEXTAUTH_SECRET (length):",
+    process.env.NEXTAUTH_SECRET ? process.env.NEXTAUTH_SECRET.length : "Not set"
   );
 
   // If the secret isn’t set in the environment, decide how to handle it:
-  if (!process.env.AUTH_SECRET) {
-    console.error("AUTH_SECRET is not set in the environment.");
+  if (!process.env.NEXTAUTH_SECRET) {
+    console.error("NEXTAUTH_SECRET is not set in the environment.");
     // You could throw an error or just let the request continue:
     return NextResponse.next();
   }
 
   try {
     // Debug: Inspect cookies
-    console.log("Cookies available:", req.cookies.getAll());
+    console.log("Cookies available:", request.cookies.getAll());
 
     // Attempt to retrieve the *JWT* token (session.strategy = 'jwt' from NextAuth)
     console.log("Attempting to retrieve the token...");
-    const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
 
     if (token) {
       console.log("Token retrieved successfully:", token);
@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
       console.warn("No token found. Possibly user is unauthenticated or token is invalid.");
     }
 
-    const url = req.nextUrl;
+    const url = request.nextUrl;
 
     // If user is already logged in (has a token) and tries to visit /auth/login
     // then redirect them to /dashboard

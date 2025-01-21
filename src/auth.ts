@@ -31,7 +31,6 @@ export const authOptions = {
             throw new Error("Invalid credentials.");
           }
 
-          // If valid, return a user object. This user object is encoded into the JWT.
           return {
             id: String(dbUser.id),
             email: dbUser.email,
@@ -47,14 +46,14 @@ export const authOptions = {
     }),
   ],
 
-  // **Important**: Force JWT-based sessions so the middleware can decode the token
   session: {
     strategy: "jwt" as const,
   },
 
   // Use the same secret in your environment (e.g., .env). Typically named NEXTAUTH_SECRET, 
   // but you can keep it as AUTH_SECRET if you want.
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
+  
 
   // trustHost is useful for production environments behind proxies, etc.
   trustHost: true,

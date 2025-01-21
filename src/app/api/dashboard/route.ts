@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   try {
     const token = await getToken({
       req: request,
-      secret: process.env.AUTH_SECRET,
+      secret: process.env.NEXTAUTH_SECRET,
     });
     if (!token || !token.sub) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   try {
     const token = await getToken({
       req: request,
-      secret: process.env.AUTH_SECRET,
+      secret: process.env.NEXTAUTH_SECRET,
     });
 
     if (!token || !token.sub) {
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const token = await getToken({
     req: request,
-    secret: process.env.AUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET,
   });
 
   if (!token || !token.sub) {
