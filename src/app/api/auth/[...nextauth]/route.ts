@@ -1,5 +1,4 @@
 import { handlers } from "@/auth";
 
-// Export the basic auth handlers
+// Export NextAuth GET and POST handlers
 export const { GET, POST } = handlers;
-
