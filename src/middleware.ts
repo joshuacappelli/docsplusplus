@@ -1,90 +1,68 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
 
 export async function middleware(req: NextRequest) {
   console.log("Middleware invoked");
 
-  const secret = process.env.AUTH_SECRET;
-  console.log("AUTH_SECRET:", secret ? "Set" : "Not set");
-  console.log("AUTH_SECRET:", process.env.AUTH_SECRET);
+  // OPTIONAL: Log the secret length to confirm it's being set
+  console.log(
+    "AUTH_SECRET (length):",
+    process.env.AUTH_SECRET ? process.env.AUTH_SECRET.length : "Not set"
+  );
 
-  console.log("nextauth url", process.env.NEXTAUTH_URL);
-
-  console.log("AUTH_SECRET (length):", secret ? secret.length : "Not set");
-
-  if (!secret) {
+  if (!process.env.AUTH_SECRET) {
     console.error("AUTH_SECRET is not set in the environment. Exiting middleware.");
-    throw new Error("AUTH_SECRET is not set");
+    // You could throw an error or just proceed. 
+    // For safety, we'll just let the request proceed, but you can modify as needed:
+    return NextResponse.next();
   }
 
   try {
-    // Log and inspect cookies
-    const cookies = req.cookies.getAll();
-    console.log("Cookies available:", cookies);
+    // Log any cookies present (helpful for debugging)
+    console.log("Cookies available:", req.cookies.getAll());
 
-    // Extract and log the session token for inspection
-    const sessionToken = cookies.find(
-      (cookie) => cookie.name === "__Secure-authjs.session-token"
-    );
-    if (sessionToken) {
-      console.log("__Secure-authjs.session-token found:", sessionToken.value);
-
-      // Decode the session token using jwt to inspect its structure
-      try {
-        const decodedToken = jwt.decode(sessionToken.value);
-        console.log("Decoded session token:", JSON.stringify(decodedToken, null, 2));
-      } catch (decodeError) {
-        console.error("Error decoding __Secure-authjs.session-token:", decodeError);
-      }
-    } else {
-      console.warn("__Secure-authjs.session-token not found in cookies.");
-    }
-
-    // Attempt to retrieve the token using getToken
+    // Attempt to retrieve the token from NextAuth
     console.log("Attempting to retrieve the token...");
-    const token = await getToken({ req, secret });
+    const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
     if (token) {
-      console.log("Token retrieved successfully:", JSON.stringify(token, null, 2));
+      console.log("Token retrieved successfully:", token);
     } else {
-      console.warn("No token found. This might indicate the user is unauthenticated or the token is invalid.");
+      console.warn(
+        "No token found. Possibly user is unauthenticated or token is invalid."
+      );
     }
 
     // Handle request based on authentication status
     const url = req.nextUrl;
-    console.log("Request URL:", url.toString());
-    console.log("Pathname:", url.pathname);
 
-    if (token) {
-      console.log("User is authenticated. Proceeding based on pathname...");
-      if (url.pathname === "/auth/login") {
-        console.log("Redirecting authenticated user away from login page to /dashboard.");
-        return NextResponse.redirect(new URL("/dashboard", url.origin));
-      }
-    } else {
-      console.log("User is not authenticated. Checking for protected routes...");
+    // If the user is authenticated (token exists) and they hit /auth/login, redirect them
+    if (token && url.pathname === "/auth/login") {
+      console.log("Authenticated user on login page - redirecting to /dashboard.");
+      return NextResponse.redirect(new URL("/dashboard", url.origin));
+    }
+
+    // If the user is not authenticated, block them from protected routes
+    if (!token) {
       const protectedRoutes = ["/dashboard", "/protected-route"];
       const isProtectedRoute = protectedRoutes.some((route) =>
         url.pathname.startsWith(route)
       );
-      console.log("Is protected route:", isProtectedRoute);
 
       if (isProtectedRoute) {
-        console.log("Redirecting unauthenticated user to /auth/login.");
+        console.log("Unauthenticated user on protected route - redirecting to /auth/login.");
         return NextResponse.redirect(new URL("/auth/login", url.origin));
       }
     }
   } catch (error) {
     console.error("Error during middleware execution:", error);
-    console.error("Possible issues could be:");
-    console.error("- Invalid or mismatched AUTH_SECRET.");
-    console.error("- Token is malformed or expired.");
-    console.error("- Missing or incorrect cookie configuration.");
+    // Fallback if token retrieval fails
+    // Decide whether to let the request proceed or to redirect:
+    // return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
-  console.log("No redirection required. Proceeding to the next middleware or handler.");
+  // If no redirect is triggered, proceed with the request
   return NextResponse.next();
 }
 
