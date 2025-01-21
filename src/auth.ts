@@ -38,6 +38,8 @@ export const authOptions = {
       },
     }),
   ],
+  secret: process.env.AUTH_SECRET,
+  trustHost: true,
 };
 
 // Export the NextAuth handlers using authOptions
