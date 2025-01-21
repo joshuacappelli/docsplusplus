@@ -9,6 +9,10 @@ export async function middleware(req: NextRequest) {
   const secret = process.env.AUTH_SECRET;
   console.log("AUTH_SECRET:", secret ? "Set" : "Not set");
 
+  console.log("nextauth url", process.env.NEXTAUTH_URL);
+
+  console.log("AUTH_SECRET (length):", secret ? secret.length : "Not set");
+
   if (!secret) {
     console.error("AUTH_SECRET is not set in the environment. Exiting middleware.");
     throw new Error("AUTH_SECRET is not set");
