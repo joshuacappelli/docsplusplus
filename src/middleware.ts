@@ -4,7 +4,11 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const secret = process.env.AUTH_SECRET;
-
+  console.log("AUTH_SECRET:", process.env.AUTH_SECRET);
+  console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
+  console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY);
+  console.log("TURSO_URL:", process.env.TURSO_URL);
+  console.log("TURSO_AUTH_TOKEN:", process.env.TURSO_AUTH_TOKEN);
   if (!secret) {
     throw new Error("AUTH_SECRET is not set");
   }

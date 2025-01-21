@@ -13,13 +13,13 @@ interface doctype {
   title: string;
 }
 
-
 export default function DashboardPage() {
   const router = useRouter();
   const [docs, setDocs] = useState<Array<{ id: number; title: string }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isCreatingDoc, setIsCreatingDoc] = useState(false);
+
 
   const handleDeleteDoc = async (docId: number) => {
     try {

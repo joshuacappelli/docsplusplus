@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { Header1 } from "@/components/ui/header";
-
 export default function Home() {
   const router = useRouter();
   
@@ -15,7 +14,6 @@ export default function Home() {
       console.error("Navigation error:", error);
     }
   };
-
 
 
   return (
