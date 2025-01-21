@@ -1,8 +1,5 @@
 import { handlers } from "@/auth";
-// import { NextResponse } from "next/server";
-// import { getToken } from "next-auth/jwt";
-// import type { NextRequest } from 'next/server';
-
+  
 // Export the basic auth handlers
 export const { GET, POST } = handlers;
 
