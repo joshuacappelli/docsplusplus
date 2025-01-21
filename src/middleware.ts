@@ -31,6 +31,9 @@ export async function middleware(request: NextRequest) {
       console.warn("No token found. Possibly user is unauthenticated or token is invalid.");
     }
 
+    console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
+
+
     const url = request.nextUrl;
     console.log("URL:", url);
     // If user is already logged in (has a token) and tries to visit /auth/login
