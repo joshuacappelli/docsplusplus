@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
+import jwt from "jsonwebtoken";
 
 export async function middleware(req: NextRequest) {
   console.log("Middleware invoked");
@@ -13,15 +14,30 @@ export async function middleware(req: NextRequest) {
     throw new Error("AUTH_SECRET is not set");
   }
 
-  // Log the request headers
-  console.log("Request Headers:", JSON.stringify(req.headers, null, 2));
-
-  // Log all cookies in the request
-  const cookies = req.cookies.getAll();
-  console.log("Cookies:", cookies);
-
-  // Attempt to retrieve the token
   try {
+    // Log and inspect cookies
+    const cookies = req.cookies.getAll();
+    console.log("Cookies available:", cookies);
+
+    // Extract and log the session token for inspection
+    const sessionToken = cookies.find(
+      (cookie) => cookie.name === "__Secure-authjs.session-token"
+    );
+    if (sessionToken) {
+      console.log("__Secure-authjs.session-token found:", sessionToken.value);
+
+      // Decode the session token using jwt to inspect its structure
+      try {
+        const decodedToken = jwt.decode(sessionToken.value);
+        console.log("Decoded session token:", JSON.stringify(decodedToken, null, 2));
+      } catch (decodeError) {
+        console.error("Error decoding __Secure-authjs.session-token:", decodeError);
+      }
+    } else {
+      console.warn("__Secure-authjs.session-token not found in cookies.");
+    }
+
+    // Attempt to retrieve the token using getToken
     console.log("Attempting to retrieve the token...");
     const token = await getToken({ req, secret });
 
@@ -31,7 +47,7 @@ export async function middleware(req: NextRequest) {
       console.warn("No token found. This might indicate the user is unauthenticated or the token is invalid.");
     }
 
-    // Log request details
+    // Handle request based on authentication status
     const url = req.nextUrl;
     console.log("Request URL:", url.toString());
     console.log("Pathname:", url.pathname);
@@ -56,7 +72,11 @@ export async function middleware(req: NextRequest) {
       }
     }
   } catch (error) {
-    console.error("Error occurred during token retrieval or middleware execution:", error);
+    console.error("Error during middleware execution:", error);
+    console.error("Possible issues could be:");
+    console.error("- Invalid or mismatched AUTH_SECRET.");
+    console.error("- Token is malformed or expired.");
+    console.error("- Missing or incorrect cookie configuration.");
   }
 
   console.log("No redirection required. Proceeding to the next middleware or handler.");
