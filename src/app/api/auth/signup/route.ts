@@ -7,7 +7,9 @@ export async function POST(request: Request) {
     await createUserInDb(email, password);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Signup error:', error);
+    const err = error as Error;
+    console.error('Signup error:', err.message);
+    console.error(err.stack);
     return NextResponse.json(
       { error: 'Failed to create account' },
       { status: 500 }

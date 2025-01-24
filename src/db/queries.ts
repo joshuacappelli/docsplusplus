@@ -11,11 +11,16 @@ async function getUserFromDb(email: string) {
 }
 
 async function createUserInDb(email: string, password: string) {
-  const newUser = await db.insert(usersTable).values({
-    email,
-    password: bcrypt.hashSync(password, 10),
-  });
-  return newUser;
+  try {
+    const newUser = await db.insert(usersTable).values({
+      email,
+      password: bcrypt.hashSync(password, 10),
+    });
+    return newUser;
+  } catch (error) {
+    console.error('Error creating user in database:', error);
+    throw new Error('Failed to create user');
+  }
 }
 
 async function getDocumentsFromDb(userId: number) {
