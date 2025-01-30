@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
+import { createSecretKey } from "crypto";
 
 export async function middleware(request: NextRequest) {
   // Basic debug logs
@@ -30,9 +31,17 @@ export async function middleware(request: NextRequest) {
 
     // Attempt to retrieve the *JWT* token (session.strategy = 'jwt' in NextAuth config)
     console.log("Attempting to retrieve the token...");
+    console.log("secret", process.env.NEXTAUTH_SECRET);
     // You can pass `secret: process.env.NEXTAUTH_SECRET` if you want to be explicit:
-    const token = await getToken({ req: request , secret: process.env.NEXTAUTH_SECRET  });
-
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    
+    if (!token) {
+      console.warn("Token missing or invalid:", request.cookies.getAll());
+    }
+    
     if (token) {
       console.log("Token retrieved successfully:", token);
     } else {

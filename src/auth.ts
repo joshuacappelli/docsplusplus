@@ -50,12 +50,7 @@ export const authOptions = {
     strategy: "jwt" as const,
   },
 
-  // Use the same secret in your environment (e.g., .env). Typically named NEXTAUTH_SECRET, 
-  // but you can keep it as AUTH_SECRET if you want.
   secret: process.env.NEXTAUTH_SECRET,
-  
-
-  // trustHost is useful for production environments behind proxies, etc.
   trustHost: true,
 };
 
