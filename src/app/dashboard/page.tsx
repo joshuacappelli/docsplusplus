@@ -69,6 +69,7 @@ export default function DashboardPage() {
       try {
         const response = await fetch("/api/dashboard?action=getDocuments", {
           method: "GET",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           }
