@@ -15,11 +15,9 @@ export async function GET(request: NextRequest) {
         : "next-auth.session-token",
     });
   
-    console.log("🔍 Token Retrieved:", token ? "✅ Found" : "❌ Token Missing");
-    console.log("🔍 Raw Token Data:", token);
   
     if (!token || !token.sub) {
-      console.warn("❌ No valid token found. Returning 401.");
+      console.warn("No valid token found. Returning 401.");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -121,6 +119,9 @@ export async function DELETE(request: NextRequest) {
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
+    cookieName: process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "next-auth.session-token",
   });
 
   if (!token || !token.sub) {
