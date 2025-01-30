@@ -70,11 +70,26 @@ export const authOptions: NextAuthConfig = {
       };
       return session;
     },
+    
+  },
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === "production"
+        ? "__Secure-authjs.session-token"
+        : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      },
+    },
   },
 
   pages: {
     signIn: "/auth/login",
   },
+  
 
   secret: process.env.NEXTAUTH_SECRET, // ✅ Secret moved to the root level
 };
