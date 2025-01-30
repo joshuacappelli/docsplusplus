@@ -7,7 +7,13 @@ export async function GET(request: NextRequest) {
   try {
     console.log("🔍 API Route Accessed - Checking Token...");
 
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+      cookieName: process.env.NODE_ENV === "production"
+        ? "__Secure-authjs.session-token"
+        : "next-auth.session-token",
+    });
   
     console.log("🔍 Token Retrieved:", token ? "✅ Found" : "❌ Token Missing");
     console.log("🔍 Raw Token Data:", token);
@@ -52,6 +58,9 @@ export async function POST(request: NextRequest) {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
+      cookieName: process.env.NODE_ENV === "production"
+        ? "__Secure-authjs.session-token"
+        : "next-auth.session-token",
     });
 
     if (!token || !token.sub) {
