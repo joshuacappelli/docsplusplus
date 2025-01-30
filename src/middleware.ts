@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
     // Attempt to retrieve the *JWT* token (session.strategy = 'jwt' in NextAuth config)
     console.log("Attempting to retrieve the token...");
     // You can pass `secret: process.env.NEXTAUTH_SECRET` if you want to be explicit:
-    const token = await getToken({ req: request /*, secret: process.env.NEXTAUTH_SECRET */ });
+    const token = await getToken({ req: request , secret: process.env.NEXTAUTH_SECRET  });
 
     if (token) {
       console.log("Token retrieved successfully:", token);

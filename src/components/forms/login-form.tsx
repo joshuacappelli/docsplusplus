@@ -31,6 +31,7 @@ export function LoginForm() {
         toast.error("Invalid login credentials");
       } else {
         // If login is successful, no error is returned
+        console.log("login was successful");
         router.push("/dashboard");
       }
     } catch (error) {
