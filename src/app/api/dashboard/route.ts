@@ -5,11 +5,15 @@ import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
+    console.log("🔍 API Route Accessed - Checking Token...");
+
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  
+    console.log("🔍 Token Retrieved:", token ? "✅ Found" : "❌ Token Missing");
+    console.log("🔍 Raw Token Data:", token);
+  
     if (!token || !token.sub) {
+      console.warn("❌ No valid token found. Returning 401.");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
