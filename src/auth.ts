@@ -1,12 +1,11 @@
-import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import NextAuth, { type NextAuthConfig } from "next-auth"; // <-- Use NextAuthConfig
 import { getUserFromDb } from "@/db/queries";
-import { signInSchema } from "./lib/zod";
+import { signInSchema } from "@/lib/zod";
 import { ZodError } from "zod";
 import bcrypt from "bcryptjs";
 
-// Configure your NextAuth options
-export const authOptions = {
+export const authOptions: NextAuthConfig = {
   providers: [
     Credentials({
       name: "Credentials",
@@ -14,45 +13,71 @@ export const authOptions = {
         email: { label: "Email", type: "email", placeholder: "your@example.com" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials) => {
+      async authorize(credentials) {
         try {
           // Validate form inputs with Zod
           const { email, password } = await signInSchema.parseAsync(credentials);
 
-          // Look up the user in your database
+          // Look up the user in the database
           const dbUser = await getUserFromDb(email);
           if (!dbUser) {
-            throw new Error("Invalid credentials.");
+            console.warn(`Login failed: No user found with email ${email}`);
+            return null;
           }
 
-          // Compare the hashed password in DB with what the user provided
-          const validPassword = bcrypt.compareSync(password, dbUser.password);
+          // Compare hashed password in DB with the provided password
+          const validPassword = await bcrypt.compare(password, dbUser.password);
           if (!validPassword) {
-            throw new Error("Invalid credentials.");
+            console.warn(`Login failed: Incorrect password for ${email}`);
+            return null;
           }
 
+          console.log(`User ${email} authenticated successfully.`);
           return {
             id: String(dbUser.id),
             email: dbUser.email,
+            emailVerified: null,
           };
         } catch (error) {
           if (error instanceof ZodError) {
             console.error("Validation failed:", error);
-            return null; // null signals "Invalid credentials" to NextAuth
+            return null;
           }
-          throw error;
+          console.error("Authentication error:", error);
+          throw new Error("Internal server error");
         }
       },
     }),
   ],
 
   session: {
-    strategy: "jwt" as const,
+    strategy: "jwt", 
   },
 
-  secret: process.env.NEXTAUTH_SECRET,
-  trustHost: true,
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      session.user = {
+        id: token.id,
+        email: token.email,
+      };
+      return session;
+    },
+  },
+
+  pages: {
+    signIn: "/auth/login",
+  },
+
+  secret: process.env.NEXTAUTH_SECRET, // ✅ Secret moved to the root level
 };
 
-// NextAuth for App Router
-export const { handlers, auth } = NextAuth(authOptions);
+// Export NextAuth for API Routes (App Router)
+export const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
