@@ -20,13 +20,14 @@ export function SignupForm() {
         try {
             const response = await fetch('/api/auth/signup', {
                 method: 'POST',
+                credentials: "include",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
 
             if (!response.ok) throw new Error('Signup failed');
             
-            router.push('/dashboard');
+            router.push('/');
             toast.success('Account created successfully!');
         } catch (error) {
             console.error('Signup error:', error);
